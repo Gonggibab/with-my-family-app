@@ -1,0 +1,29 @@
+.switch {
+  display: block;
+  position: relative;
+  width: 2.5rem;
+  height: 1.5rem;
+  margin: auto;
+  border-radius: 1rem;
+  background-color: var(--switch-bg-color);
+  cursor: pointer;
+
+  .slider {
+    width: 1.3rem;
+    height: 1.3rem;
+    position: absolute;
+    top: 50%;
+    left: .1rem;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background-color: var(--slider-bg-color);
+    transition: all 0.2s ease-in;
+  }
+
+  input:checked + .slider {
+    transform: translate(1rem, -50%);
+  }
+}
+
+
+

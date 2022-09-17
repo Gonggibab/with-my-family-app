@@ -1,0 +1,144 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.vaildationBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;    
+  padding: 1rem 2rem;
+  width: 40vw;
+  height: calc(40vw);
+  min-width: 400px;
+  max-width: 600px;
+  min-height: calc(400px);
+  max-height: calc(500px);
+  border-radius: .8rem;
+  background: var(--component-color);
+  box-shadow: var(--post-shadow-color) 0px 50px 100px -20px;
+
+  @include mixins.device(mobile) {
+    padding: 1rem 2rem;
+    width: 90vw;
+    height: calc(90vw + 100px);
+    min-width: calc(0.9 * variables.$minimum-device-width);
+    min-height: calc(0.9 * variables.$minimum-device-width + 100px);
+  }
+
+  .logo {
+    position: relative;
+    margin-bottom: 2rem;
+    width: 100%;
+    height: 4rem;
+    filter: var(--logo-invert-value);
+  }  
+
+  .emailVaildation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    
+    .title {
+      font-size: .8rem;
+    }
+
+    .validation {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 1rem 0;
+      width: 100%;
+      height: 2.2rem;
+  
+      .input {
+        display: flex;
+        align-items: center;
+        padding: .2rem .4rem;
+        width: 80%;
+        height: 2.2rem;
+        font-size: .8em;
+        border-radius: .2rem;
+        background: var(--hr-color);
+        transition: all 0.2s ease-in;
+      
+        input {    
+          width: 100%;
+          height: 100%;
+          color: inherit;
+          background: transparent;
+          
+          &:focus::placeholder {         
+            color: transparent;
+            transition: all 0.1s;
+          }
+      
+          &::placeholder{
+            color: var(--color);
+            font-size: .8rem;
+            opacity: .6;  
+          }
+        }
+  
+        .timer {     
+          display: flex;
+          width: 2rem;
+          height: 1.2rem;
+          color: colors.$red;
+        }
+      }
+  
+      .resend {
+        width: 20%;
+        height: 2.2rem;
+        color: inherit;
+        font-size: .8rem;
+        text-decoration: underline;
+      }    
+    }
+  
+    .errMsg {        
+      margin-bottom: .5rem;
+      height: 1rem;
+      font-size: .8rem;
+      color: colors.$red;
+    }
+  
+    .instruction {
+      display: flex;
+      flex-direction: column;
+      margin: .5rem 0;
+      font-size: .8rem;
+
+      span {
+        margin: 0.2rem 0;
+      }
+    }
+  
+    .confirm {
+      margin: 1rem 0;
+      width: 100%;
+      max-width: 400px;
+      height: 2.2rem;
+      border-radius: .2rem;
+      font-weight: bold;
+      transition: all 0.2s;
+      color: colors.$white;
+      background: colors.$blue;
+  
+      &:hover {
+        color: colors.$blue;
+        background: colors.$white;
+      }
+    }
+  
+    .cancel {
+      align-self: center;
+      font-size: .8rem;
+      text-decoration: underline;
+    }
+  }
+}
+

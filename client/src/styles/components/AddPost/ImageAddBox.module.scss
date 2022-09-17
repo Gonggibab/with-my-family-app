@@ -1,0 +1,141 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.imageAddBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;   
+  width: 100%;
+  height: 100%;
+
+  .editSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    width: 100%;
+    height: 90%;
+
+    .imageDropZone {    
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      border: .2rem dashed var(--nav-border-color);
+  
+      span {
+        margin: 1rem;
+        font-size: 1rem;
+        font-weight: bold;
+  
+        @include mixins.device(mobile) {
+          font-size: .9rem;
+        }
+      }   
+  
+      .fileInput {      
+        label {
+          display: block;
+          color: inherit;
+          font-size: .9rem;
+          font-weight: bold;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+  
+        input[type="file"] {
+          position: absolute;
+          width: 0;
+          height: 0;
+          padding: 0;
+          overflow: hidden;
+          border: 0;
+        }
+      }
+    }
+  
+    .imageInspectZone {
+      position: relative;
+      width: 100%;
+      height: 100%;
+  
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
+      }
+  
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
+      }
+      
+      svg {
+        z-index: 1;
+        position: absolute;      
+        top: 50%;      
+        width: 2rem;
+        height: 2rem;
+        border-radius: 2rem;
+        color: colors.$white;
+        background-color: rgba(0, 0, 0, 0.4);
+        transition: all .2s ease-in;
+  
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.6);
+          transform: scale(1.1);
+        }
+      }
+  
+      .leftArrow {
+        left: 1rem;
+      }
+  
+      .rightArrow {
+        right: 1rem;
+      }
+    }  
+  
+
+  }
+
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    width: 100%;
+    height: 2rem;
+
+    .backBtn {
+      font-size: .8rem;
+      color: var(--color);
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .nextBtn {            
+      padding: .4rem .8rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: .5rem;
+      color: colors.$white;
+      background-color: colors.$blue;
+      transition: all .2s ease-out;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+@use '../abstacts/colors';
+@use '../abstacts/mixins';
+@use '../abstacts/variables';
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  padding-left: calc(variables.$desktop-navbar-width + 2rem);
+  width: 100vw;
+  height: 100vh;
+
+  @include mixins.device(mobile) {
+    padding: 1rem;
+    padding-top: calc(variables.$mobile-navbar-height + 1rem);
+    min-width: variables.$minimum-device-width;
+    min-height: variables.$minimum-device-height;
+  }    
+}

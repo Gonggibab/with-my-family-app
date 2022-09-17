@@ -1,0 +1,110 @@
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+@use '../../abstacts/colors';
+
+.nav {
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 2rem 1rem;
+  width: variables.$desktop-navbar-width;
+  height: 100vh;
+  min-height: 600px;
+  border-right: 2px solid var(--nav-border-color);
+  background: var(--bg-color);
+  transition: all 0.2s ease-in;
+
+  @include mixins.device(mobile) {
+    flex-direction: row;
+    padding: .5rem 2rem;
+    width: 100vw;
+    min-width: 320px;
+    min-height: variables.$mobile-navbar-height;
+    height: variables.$mobile-navbar-height;
+    border-right: none;
+    border-bottom: 1px solid var(--nav-border-color);
+  }
+
+  .logo {
+    position: relative;
+    width: 8rem;
+    height: 4rem;
+    filter: var(--logo-invert-value);
+
+    @include mixins.device(mobile) {
+      display: none;
+    }
+  }
+
+  .icons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+
+    @include mixins.device(mobile) {
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0 2rem;
+      width: 80%;
+    }
+
+    a {
+      margin: 2rem 0;
+      cursor: pointer;     
+
+      @include mixins.device(mobile) {
+        margin: 0;
+      }
+    }
+
+    a.active {
+      color: colors.$blue;
+      transform: scale(1.2);
+      transition: all 0.2s ease-in;
+
+      span {
+        transform: scale(0.9) translate(-58%, -160%);
+      }
+    }
+
+    span {      
+      position: absolute;
+      left: 50%;
+      transform: translate(-48%, -160%);
+      font-size: .7rem;
+      font-weight: bold;      
+      width: max-content;
+      opacity: 0;
+      transition: opacity 0.2s ease-in;
+    }
+
+    a:hover span{
+      opacity: .8;
+
+      @include mixins.device(mobile) {
+        display: none;
+      }
+    }
+  }
+
+  .btnDarkmode {    
+    @include mixins.device(mobile) {
+      width: 20%;
+    }
+
+    span {
+      display: block;
+      text-align: center;
+      margin-bottom: .6rem;
+      font-size: .8rem;
+      font-weight: bold;
+    }
+  }
+}

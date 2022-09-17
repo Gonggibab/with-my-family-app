@@ -1,0 +1,63 @@
+@use '../abstacts/colors';
+@use '../abstacts/mixins';
+@use '../abstacts/variables';
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  padding-left: calc(variables.$desktop-navbar-width + 2rem);
+  width: 100vw;
+  height: fit-content;
+
+  @include mixins.device(mobile) {
+    padding: 1rem;
+    padding-top: calc(variables.$mobile-navbar-height + 1rem);
+    min-width: variables.$minimum-device-width;
+    min-height: variables.$minimum-device-height;
+  }
+
+  .addPostBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 4rem;
+    color: var(--color);
+    background-color: var(--component-color);
+    transition: all 0.2s ease-in;
+
+    svg {
+      width: 1.7rem;
+      height: 1.7rem;
+      opacity: 1;
+    }
+
+    span {
+      font-size: 1rem;
+      font-weight: bolder;
+      display: none;
+      opacity: 0;
+    }
+
+    &:hover {
+      width: 6rem;
+
+      svg {
+        display: none;
+        opacity: 0;
+      }
+  
+      span {
+        display: block;
+        opacity: 1;
+      }
+    }
+  }
+}

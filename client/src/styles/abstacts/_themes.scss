@@ -1,0 +1,41 @@
+@use './colors' as *;
+
+html[data-theme="light"] {
+  --color: #{$dark-black};
+  --bg-color: #{$light-grey};
+  --component-color: #{$grey};
+
+  // Layout
+  --nav-border-color: #{$dark-grey};
+  --logo-invert-value: invert(15%);
+
+  // ToggleSwitch
+  --switch-bg-color: #{$grey};
+  --slider-bg-color: #{$black};
+
+  // Home
+  --post-shadow-color: rgba(50, 50, 50, 0.55);
+
+  // Login
+  --hr-color: #{$dark-grey};
+}
+
+html[data-theme="dark"] {
+  --color: #{$light-grey};
+  --bg-color: #{$black};
+  --component-color: #{$light-black};
+
+  // Layout
+  --nav-border-color: #{$light-black};
+  --logo-invert-value: invert(100%);
+
+    // ToggleSwitch
+  --switch-bg-color: #{$light-black};
+  --slider-bg-color: #{$grey};
+
+  // Home
+  --post-shadow-color: rgb(25, 25, 25, 0.55);
+
+  // Login
+  --hr-color: #{$black};
+}

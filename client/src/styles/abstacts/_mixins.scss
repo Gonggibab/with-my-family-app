@@ -1,0 +1,15 @@
+// @mixins for responsive layout
+@mixin device($type) {
+  @if $type == mobile {
+    @media only screen and (max-width: 550px) { @content; }
+  }
+  @if $type == tablet {
+    @media only screen and (max-width: 820px) { @content; }
+  }
+  @if $type == labtop {
+    @media only screen and (max-width: 1024px) { @content; }
+  }
+  @if $type == desktop {
+    @media only screen and (min-width: 1025px) { @content; }
+  }
+}
