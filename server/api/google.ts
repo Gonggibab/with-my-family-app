@@ -38,6 +38,7 @@ const login = (req: Request, res: Response) => {
                 email: user.email,
                 birthday: user.birthday,
                 name: user.name,
+                profile: user.profile,
                 role: user.role,
               },
             });

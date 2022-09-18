@@ -85,6 +85,7 @@ const login = async (req: Request, res: Response) => {
               email: user.email,
               birthday: user.birthday,
               name: user.name,
+              profile: user.profile,
               role: user.role,
             },
           });
@@ -102,6 +103,7 @@ const userAuth = async (req: Request, res: Response) => {
       email: req.user.email,
       birthday: req.user.birthday,
       name: req.user.name,
+      profile: req.user.profile,
       role: req.user.role,
     },
   });
@@ -125,6 +127,7 @@ const logout = async (req: Request, res: Response) => {
           email: '',
           birthday: '',
           name: '',
+          profile: '',
           role: 0,
         },
       });

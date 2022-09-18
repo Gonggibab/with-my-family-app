@@ -18,6 +18,9 @@ html[data-theme="light"] {
 
   // Login
   --hr-color: #{$dark-grey};
+
+  // Profile
+  --profile-hr-color: #{$dark-grey};
 }
 
 html[data-theme="dark"] {
@@ -38,4 +41,7 @@ html[data-theme="dark"] {
 
   // Login
   --hr-color: #{$black};
+
+  // Profile
+  --profile-hr-color: #{$light-black};
 }

@@ -1,0 +1,140 @@
+@use '../abstacts/colors';
+@use '../abstacts/mixins';
+@use '../abstacts/variables';
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  padding-left: calc(variables.$desktop-navbar-width + 2rem);
+  width: 100vw;
+  height: 100vh;
+
+  @include mixins.device(mobile) {
+    padding: 1rem;
+    padding-top: calc(variables.$mobile-navbar-height + 1rem);
+    min-width: variables.$minimum-device-width;
+    min-height: variables.$minimum-device-height;
+  }
+
+  .userProfile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30%;
+
+    .userImage {
+      margin-right: 4rem;
+      width: 10rem;
+      height: 10rem;
+
+      @include mixins.device(mobile) {
+        margin-right: 1.8rem;
+        width: 8rem;
+        height: 8rem;
+      }
+
+      img, svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
+        border-radius: 50%;
+      }
+    }
+
+    .userInfo {
+      margin-right: 12rem;
+
+      @include mixins.device(tablet) {
+        margin-right: 0rem;
+      }
+
+      h3 {
+        font-size: 1.8rem;
+        font-weight: lighter;
+        margin-bottom: 1rem;
+
+        @include mixins.device(mobile) {
+          font-size: 1.4rem;
+          margin-bottom: .8rem;
+        }
+      }
+
+      .userNumbers {        
+        display: flex;
+        margin-bottom: 1.4rem;
+
+        & > div {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          @include mixins.device(mobile) {
+            font-size: .8rem;
+          }
+
+          h4 {
+            font-size: 1rem;
+            margin-left: 1rem;    
+            
+            @include mixins.device(mobile) {
+              font-size: .8rem;
+            }
+          }
+
+          span {
+            margin-left: .5rem;
+          }
+        }
+      }
+
+      .userButtons {
+        button {
+          padding: .4rem .8rem;
+          font-size: .8rem;
+          font-weight: bold;
+          color: inherit;
+          border-radius: 1rem;
+        }
+
+        .profileEditBtn {
+          margin-right: 1rem;
+          color: colors.$white;
+          background-color: colors.$blue;
+          transition: all .2s ease-in;
+
+          &:hover {
+            color: colors.$blue;
+            background-color: colors.$white;
+          }
+        }
+
+        .logoutBtn {
+          background-color: var(--component-color);
+          transition: all .2s ease-in;
+
+          &:hover {
+            color: var(--component-color);
+            background-color: var(--color);
+          }
+        }
+      }
+    }
+  }
+
+  hr {
+    width: 80%;
+    border: 1px solid var(--profile-hr-color);
+
+    @include mixins.device(tablet) {
+      width: 100%;
+    }
+  }
+
+  .userPosts {
+  }
+}

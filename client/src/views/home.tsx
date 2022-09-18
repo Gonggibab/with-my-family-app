@@ -1,11 +1,16 @@
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { RootState } from 'redux/store';
 import Post from 'components/Home/Post';
 import { AiFillFileAdd } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
 
 import styles from 'styles/views/Home.module.scss';
+import { useEffect } from 'react';
+import { setIsLoading } from 'redux/_slices/appSlice';
 
 export type PostProps = {
-  key: any;
+  key: string;
   name: string;
   relationship?: string;
   profileURL: string;
@@ -17,6 +22,13 @@ export type PostProps = {
 };
 
 export default function Home() {
+  const dispatch = useDispatch();
+  const isLogin = useSelector((state: RootState) => state.user.isLogin);
+
+  useEffect(() => {
+    dispatch(setIsLoading(false));
+  }, []);
+
   const postComponents = postData.map((data: postDataType) => {
     return (
       <Post
@@ -36,10 +48,12 @@ export default function Home() {
   return (
     <div className={styles.container}>
       {postComponents}
-      <Link className={styles.addPostBtn} to={'/addPost'}>
-        <AiFillFileAdd />
-        <span>글 쓰기</span>
-      </Link>
+      {isLogin && (
+        <Link className={styles.addPostBtn} to={'/addPost'}>
+          <AiFillFileAdd />
+          <span>글 쓰기</span>
+        </Link>
+      )}
     </div>
   );
 }

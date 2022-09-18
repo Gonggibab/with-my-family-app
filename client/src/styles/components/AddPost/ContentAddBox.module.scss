@@ -1,0 +1,137 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.imageAddBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;   
+  width: 100%;
+  height: 100%;
+
+  .editSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70%;    
+  
+    .imageInspectZone {
+      position: relative;
+      width: 100%;
+      height: 100%;
+  
+      img, video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
+        border-radius: .5rem;
+      }      
+      
+      svg {
+        z-index: 1;
+        position: absolute;      
+        top: 50%;      
+        width: 2rem;
+        height: 2rem;
+        border-radius: 2rem;
+        color: colors.$white;
+        background-color: rgba(0, 0, 0, 0.4);
+        transition: all .2s ease-in;
+  
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.6);
+          transform: scale(1.1);
+        }
+      }
+  
+      .leftArrow {
+        left: 1rem;
+      }
+  
+      .rightArrow {
+        right: 1rem;
+      }
+    } 
+  }
+
+  .contentAddZone {
+    width: 100%;
+    height: 20%;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: .5rem;
+    background-color: var(--bg-color);
+
+    .uploaderInfo {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 1.5rem;
+      font-size: .8rem;
+      font-weight: bold;
+
+      img {
+        margin-right: .8rem;
+        width: 1.8rem;
+        height: 1.8rem;
+        object-fit: cover;
+        object-position: 50% 50%;
+        border-radius: 1.8rem;
+      }
+    }
+
+    textarea {
+      margin-top: 1rem;
+      width: 100%;
+      height: 60%;
+      font-size: .8rem;
+      color: inherit;
+      background-color: transparent;
+
+      &:focus::placeholder {         
+        color: transparent;
+      }
+  
+      &::placeholder{
+        color: inherit;
+        font-size: .8rem;
+        opacity: .6;  
+      }
+    }
+  }
+  
+  .buttons {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0 1rem;
+    width: 100%;
+
+    .backBtn {
+      font-size: .8rem;
+      color: var(--color);
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .nextBtn {            
+      padding: .4rem 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: .5rem;
+      color: colors.$white;
+      background-color: colors.$blue;
+      transition: all .2s ease-out;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+  }
+}

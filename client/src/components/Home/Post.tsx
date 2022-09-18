@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux';
 import {
   BsHandThumbsUpFill,
   BsHandThumbsUp,
@@ -21,6 +22,8 @@ export default function Post({
   updatedAt,
   comments,
 }: PostProps) {
+  const dispatch = useDispatch();
+
   const onDdabongClicked = () => {};
   const dateDiff = calcDateDiff(updatedAt);
 

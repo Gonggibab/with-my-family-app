@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
+import { setIsLoading } from 'redux/_slices/appSlice';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { UserAPI } from 'api/UserAPI';
-import GoogleLoginButton from 'components/Register/GoogleLogin';
-import NaverLoginButton from 'components/Register/NaverLogin';
+import GoogleLoginButton from 'components/Login/GoogleLogin';
+import NaverLoginButton from 'components/Login/NaverLogin';
 
 import styles from 'styles/views/Login.module.scss';
 import logo from 'assets/logo_kr.svg';
@@ -38,7 +39,7 @@ export default function Login() {
 
     setEmail(emailRef.current!.value);
     setPassword(passwordRef.current!.value);
-  }, []);
+  }, [isLogin, navigate]);
 
   const onPasswordShow = () => {
     setShowPassword(!showPassword);
@@ -50,6 +51,7 @@ export default function Login() {
   };
 
   const onLoginClicked = (target: HTMLButtonElement) => {
+    dispatch(setIsLoading(true));
     const errElem = target.previousElementSibling as HTMLElement;
 
     const loginData = {
@@ -76,6 +78,8 @@ export default function Login() {
       errElem.innerHTML = '';
       clearTimeout(timer);
     }, 5000);
+
+    dispatch(setIsLoading(false));
   };
 
   return (

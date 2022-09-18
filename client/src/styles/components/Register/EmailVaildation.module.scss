@@ -72,13 +72,11 @@
           
           &:focus::placeholder {         
             color: transparent;
-            transition: all 0.1s;
           }
       
           &::placeholder{
             color: var(--color);
             font-size: .8rem;
-            opacity: .6;  
           }
         }
   

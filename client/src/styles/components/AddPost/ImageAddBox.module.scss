@@ -14,7 +14,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 1rem 0;
     width: 100%;
     height: 90%;
 
@@ -58,60 +57,13 @@
         }
       }
     }
-  
-    .imageInspectZone {
-      position: relative;
-      width: 100%;
-      height: 100%;
-  
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: 50% 50%;
-      }
-  
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: 50% 50%;
-      }
-      
-      svg {
-        z-index: 1;
-        position: absolute;      
-        top: 50%;      
-        width: 2rem;
-        height: 2rem;
-        border-radius: 2rem;
-        color: colors.$white;
-        background-color: rgba(0, 0, 0, 0.4);
-        transition: all .2s ease-in;
-  
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.6);
-          transform: scale(1.1);
-        }
-      }
-  
-      .leftArrow {
-        left: 1rem;
-      }
-  
-      .rightArrow {
-        right: 1rem;
-      }
-    }  
-  
-
   }
 
-  
   .buttons {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 1rem;
     padding: 0 1rem;
     width: 100%;
     height: 2rem;
@@ -121,21 +73,6 @@
       color: var(--color);
       font-weight: bold;
       text-decoration: underline;
-    }
-
-    .nextBtn {            
-      padding: .4rem .8rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: .5rem;
-      color: colors.$white;
-      background-color: colors.$blue;
-      transition: all .2s ease-out;
-
-      &:hover {
-        color: colors.$blue;
-        background-color: colors.$white;
-      }
     }
   }
 }

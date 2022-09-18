@@ -7,15 +7,20 @@ import { BsFillChatFill } from 'react-icons/bs';
 import { RiSettings3Fill } from 'react-icons/ri';
 import { RiLoginBoxFill } from 'react-icons/ri';
 
+import { UserAPI } from 'api/UserAPI';
 import { RootState } from 'redux/store';
-import { setCurrentPage, updateIsDarkMode } from 'redux/_slices/appSlice';
+import {
+  setCurrentPage,
+  setIsLoading,
+  updateIsDarkMode,
+} from 'redux/_slices/appSlice';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
 import { checkCategory } from 'utils/checkCategory';
 import ToggleSwitch from 'components/Layout/ToggleSwitch';
+import Loader from 'components/Loader';
 
 import styles from 'styles/components/Layout/Layout.module.scss';
 import logo from 'assets/logo.svg';
-import { UserAPI } from 'api/UserAPI';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -27,12 +32,14 @@ export default function Layout({ children }: LayoutProps) {
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
   const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
   const currentPage = useSelector((state: RootState) => state.app.currentPage);
+  const isLoading = useSelector((state: RootState) => state.app.isLoading);
 
   useEffect(() => {
     dispatch(setCurrentPage(location.pathname));
   }, [dispatch, location.pathname]);
 
   useEffect(() => {
+    dispatch(setIsLoading(true));
     UserAPI.auth().then((res) => {
       if (res.status === 400) {
         console.log('오류가 발생했습니다. 다시 시도해 주세요');
@@ -48,6 +55,7 @@ export default function Layout({ children }: LayoutProps) {
 
     dispatch(updateIsDarkMode(theme === 'dark'));
     document.documentElement.setAttribute('data-theme', theme);
+    dispatch(setIsLoading(false));
   }, [dispatch]);
 
   return (
@@ -100,6 +108,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </nav>
       <main>{children}</main>
+      {isLoading && <Loader />}
     </>
   );
 }

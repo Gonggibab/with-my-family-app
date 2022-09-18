@@ -51,20 +51,64 @@ button {
   background: transparent;
 }
 
-input {
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
+}
+
+input, textarea {
   margin: 0; 
   padding: 0;
   border: none;
   outline:none;
   font-family: 'Noto Sans KR', sans-serif;  
   letter-spacing: 1px;
+  resize: none;
+  transition: all 0.2s;
 }
 
-img {
+/* TextArea Scroll Bar properties */
+textarea {
+  padding-right: .4rem;
+
+  &::-webkit-scrollbar {
+    width: .4rem;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--nav-border-color);
+    border-radius: .5rem;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Prevent Selection */
+a, button, img {
   -webkit-user-select:none;
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
+}
+
+/* Scroll Bar properties */
+body::-webkit-scrollbar {
+  width: .5rem;  
+  
+  @include mixins.device(tablet) {
+    width: 0px;
+  } 
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--nav-border-color);
+  border-radius: .5rem;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 // Remove properties for Google Auto Complete
@@ -73,8 +117,8 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus, 
 input:-webkit-autofill:active{
     transition: background-color 5000s ease-in-out 0s;
-    box-shadow: 0 0 0px 1000px var(--hr-color) inset !important;;
-	  -webkit-transition: background-color 9999s ease-out;
+    box-shadow: 0 0 0px 1000px var(--hr-color) inset !important;
+    -webkit-transition: background-color 9999s ease-out;
     -webkit-box-shadow: 0 0 0px 1000px var(--hr-color) inset !important;
     -webkit-text-fill-color: var(--color) !important;
 }

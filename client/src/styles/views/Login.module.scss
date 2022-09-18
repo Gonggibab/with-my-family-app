@@ -157,9 +157,7 @@
     hr {
       margin: 1rem 0;
       width: 100%;
-      height: 1px;
-      background: var(--hr-color);
-      border: 0;
+      border: 1px solid var(--hr-color);
     }
   
     .loginAPINaver {

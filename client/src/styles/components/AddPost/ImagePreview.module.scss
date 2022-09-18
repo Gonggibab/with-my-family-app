@@ -1,0 +1,151 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.imageAddBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;   
+  width: 100%;
+  height: 100%;
+
+  .editSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 90%;
+  
+    .imageInspectZone {
+      position: relative;
+      width: 100%;
+      height: 100%;
+  
+      img, video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
+        border-radius: .5rem;
+      }
+
+      .imgEditBar {
+        display: flex;
+        z-index: 1;
+        position: absolute;     
+        top: 1rem;
+        left: 1rem;
+        width: calc(100% - 2rem) ;
+      }
+
+      button, .imgAddBtn {        
+        margin-right: 1rem;
+        padding: .5rem 1rem;
+        border-radius: .5rem;
+        font-size: .8rem;
+        font-weight: bold;
+        color: colors.$white;
+        background-color: rgba(0, 0, 0, 0.4);
+        transition: all .2s ease-in;
+      }
+
+      .imgEditBtn, .closeEditBtn  {
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+      }
+
+      .fileInput {
+        .imgAddBtn {   
+          display: block;
+          -webkit-user-select:none;
+          -moz-user-select:none;
+          -ms-user-select:none;
+          user-select:none;  
+
+          &:hover {
+            background-color: colors.$blue;
+          }   
+        }
+
+        input[type="file"] {
+          position: absolute;
+          width: 0;
+          height: 0;
+          padding: 0;
+          overflow: hidden;
+          border: 0;
+        }      
+      }
+      
+
+      .imgDeleteBtn {
+        margin-left: auto;
+        margin-right: 0;
+
+        &:hover {
+          background-color: colors.$red;
+          opacity: .8;
+        }
+      }
+      
+      svg {
+        z-index: 1;
+        position: absolute;      
+        top: 50%;      
+        width: 2rem;
+        height: 2rem;
+        border-radius: 2rem;
+        color: colors.$white;
+        background-color: rgba(0, 0, 0, 0.4);
+        transition: all .2s ease-in;
+  
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.6);
+          transform: scale(1.1);
+        }
+      }
+  
+      .leftArrow {
+        left: 1rem;
+      }
+  
+      .rightArrow {
+        right: 1rem;
+      }
+    } 
+  }
+  
+  .buttons {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0 1rem;
+    width: 100%;
+
+    .backBtn {
+      font-size: .8rem;
+      color: var(--color);
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .nextBtn {            
+      padding: .4rem 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: .5rem;
+      color: colors.$white;
+      background-color: colors.$blue;
+      transition: all .2s ease-out;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+  }
+}

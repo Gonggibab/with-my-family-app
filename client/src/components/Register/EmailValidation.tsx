@@ -14,6 +14,7 @@ import { sendEmailVerification } from 'utils/sendEmail';
 
 import styles from 'styles/components/Register/EmailVaildation.module.scss';
 import logo from 'assets/createAccount.svg';
+import { setIsLoading } from 'redux/_slices/appSlice';
 
 export default function EmailValidation() {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ export default function EmailValidation() {
       } else if (enteredNum !== validationNum) {
         errElem.innerHTML = '인증코드가 틀렸습니다';
       } else {
+        dispatch(setIsLoading(true));
         const birthday = new Date(
           +bDay.substring(0, 4),
           +bDay.substring(5, 7),
@@ -94,6 +96,7 @@ export default function EmailValidation() {
             navigate('/');
           }
         });
+        dispatch(setIsLoading(true));
       }
 
       let errTimer = setTimeout(() => {

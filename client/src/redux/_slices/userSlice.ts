@@ -9,6 +9,7 @@ const userSlice = createSlice({
       email: '',
       birthday: '',
       name: '',
+      profile: '',
       role: 0,
     },
   },
