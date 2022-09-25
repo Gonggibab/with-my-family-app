@@ -37,7 +37,7 @@ export default function ContentAddBox({
       const postRes = await PostAPI.upload(postData);
       const postId = postRes.data.postId;
 
-      await MediaAPI.upload(files, postId);
+      await MediaAPI.uploadMedia(files, postId);
       navigate('/');
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요! ' + err);

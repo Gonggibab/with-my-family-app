@@ -2,35 +2,37 @@ import HttpRequest from 'api/HttpRequest';
 import { AxiosRequestHeaders } from 'axios';
 
 export const MediaAPI = {
-  upload: async (files: File[], postId: string) => {
+  uploadMedia: async (files: File[], postId: string) => {
     let formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('file', files[i]);
+    for (const file of files) {
+      formData.append('file', file);
     }
 
     const header: AxiosRequestHeaders = {
       'content-type': 'multipart/form-data',
     };
-
     const res = await HttpRequest.post(
       '/api/media/uploadServer',
       formData,
       header
     );
-    const filesData = res.data.files;
+
+    const fileData = res.data.files;
     const mediaData = [];
-    for (let i = 0; i < filesData.length; i++) {
-      const file = filesData[i];
+    for (const file of fileData) {
       mediaData.push({
         postId: postId,
         filename: file.filename,
         filePath: file.path,
         mimeType: file.mimetype,
         originalName: file.originalname,
-        size: 6749075,
+        size: file.size,
       });
     }
 
     return HttpRequest.post('/api/media/uploadDB', mediaData);
+  },
+  getByPost: (postId: string) => {
+    return HttpRequest.post('/api/media/findByPost', { postId });
   },
 };

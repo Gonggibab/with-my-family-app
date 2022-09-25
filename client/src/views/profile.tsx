@@ -7,36 +7,83 @@ import { setIsLogin, setUser } from 'redux/_slices/userSlice';
 import { setIsLoading } from 'redux/_slices/appSlice';
 import { UserAPI } from 'api/UserAPI';
 import { PostAPI } from 'api/PostAPI';
+import { MediaAPI } from 'api/MediaAPI';
+import PostBox from 'components/Profile/PostBox';
 
 import styles from 'styles/views/Profile.module.scss';
 import { FaUserCircle } from 'react-icons/fa';
+
+type PostData = {
+  _id: string;
+  content: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+type MediaData = {
+  _id: string;
+  postId?: string;
+  userId?: string;
+  filename: string;
+  filePath: string;
+  mimeType: string;
+  originalName: string;
+  size: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+type PostBox = {
+  postId: string;
+  filePath: string;
+};
+
+export type PostBoxProps = {
+  filePath: string;
+};
 
 export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
   const user = useSelector((state: RootState) => state.user.user);
-  const [posts, setPosts] = useState([]);
+  const [postBoxes, setPostBoxes] = useState<PostBox[]>([]);
 
   useEffect(() => {
     if (!isLogin) {
       navigate('/login');
     }
 
-    getUserPosts(user._id);
+    if (user._id) {
+      getUserPosts(user._id);
+    }
   }, []);
 
   const getUserPosts = async (userId: string) => {
+    dispatch(setIsLoading(true));
     try {
       const postRes = await PostAPI.getByUser(userId);
-      console.log(postRes.data);
+      const posts: PostData[] = postRes.data.posts;
+
+      const postBoxData = [];
+      for (const post of posts) {
+        const postId = post._id;
+        const mediaRes = await MediaAPI.getByPost(postId);
+        const filePath = mediaRes.data.media[0].filePath;
+
+        postBoxData.push({
+          postId: postId,
+          filePath: filePath,
+        });
+      }
+      setPostBoxes(postBoxData);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
+    dispatch(setIsLoading(false));
   };
 
   const onLogoutClicked = () => {
-    dispatch(setIsLoading(true));
     UserAPI.logout().then((res) => {
       if (res.status === 400) {
         console.log('오류가 발생했습니다. 다시 시도해 주세요');
@@ -46,8 +93,11 @@ export default function Profile() {
         navigate('/login');
       }
     });
-    dispatch(setIsLoading(false));
   };
+
+  const renderPostBoxes = postBoxes.map((postBox: PostBox) => {
+    return <PostBox key={postBox.postId} filePath={postBox.filePath} />;
+  });
 
   return (
     <div className={styles.container}>
@@ -84,7 +134,7 @@ export default function Profile() {
         </div>
       </div>
       <hr></hr>
-      <div className={styles.userPosts}></div>
+      <div className={styles.userPosts}>{renderPostBoxes}</div>
     </div>
   );
 }

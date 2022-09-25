@@ -82,7 +82,7 @@ export const validateEmail = async (target: HTMLInputElement, str: string) => {
       }
     });
 
-    return await checkDup;
+    return checkDup;
   }
 };
 

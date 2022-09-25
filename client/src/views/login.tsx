@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
-import { setIsLoading } from 'redux/_slices/appSlice';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { UserAPI } from 'api/UserAPI';
 import GoogleLoginButton from 'components/Login/GoogleLogin';
@@ -51,7 +50,6 @@ export default function Login() {
   };
 
   const onLoginClicked = (target: HTMLButtonElement) => {
-    dispatch(setIsLoading(true));
     const errElem = target.previousElementSibling as HTMLElement;
 
     const loginData = {
@@ -78,8 +76,6 @@ export default function Login() {
       errElem.innerHTML = '';
       clearTimeout(timer);
     }, 5000);
-
-    dispatch(setIsLoading(false));
   };
 
   return (
