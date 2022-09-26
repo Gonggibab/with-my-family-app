@@ -39,16 +39,19 @@ export const UserAPI = {
   login: (data: LoginDataType) => {
     return HttpRequest.post('/api/users/login', data);
   },
+  naverLogin: (data: NaverLoginDataType) => {
+    return HttpRequest.post('/api/naver/login', data);
+  },
+  googleLogin: (data: GoogleLoginDataType) => {
+    return HttpRequest.post('/api/google/login', data);
+  },
   auth: () => {
     return HttpRequest.get('/api/users/auth');
   },
   logout: () => {
     return HttpRequest.get('/api/users/logout');
   },
-  naverLogin: (data: NaverLoginDataType) => {
-    return HttpRequest.post('/api/naver/login', data);
-  },
-  googleLogin: (data: GoogleLoginDataType) => {
-    return HttpRequest.post('/api/google/login', data);
+  getUser: (userId: string) => {
+    return HttpRequest.post('/api/users/findUser', { userId });
   },
 };

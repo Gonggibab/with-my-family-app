@@ -18,6 +18,20 @@ const upload = (req: Request, res: Response) => {
   });
 };
 
+// Find Post
+const findPost = async (req: Request, res: Response) => {
+  PostModel.findOne({ _id: req.body.postId })
+    .populate('userId')
+    .exec(function (err, post) {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ err });
+      }
+      return res.status(200).json({ post });
+    });
+};
+
+// Find Post by User
 const findByUser = (req: Request, res: Response) => {
   const userId = new mongoose.Types.ObjectId(req.body.userId);
   PostModel.find({ userId: userId })
@@ -32,4 +46,18 @@ const findByUser = (req: Request, res: Response) => {
     });
 };
 
-export { upload, findByUser };
+// Delete Post
+const deletePost = (req: Request, res: Response) => {
+  PostModel.deleteOne({ _id: req.body.postId }, (err: Error, post: IPost) => {
+    if (err) {
+      return res.status(400).json({
+        err,
+      });
+    }
+    return res.status(200).json({
+      post,
+    });
+  });
+};
+
+export { upload, findPost, findByUser, deletePost };

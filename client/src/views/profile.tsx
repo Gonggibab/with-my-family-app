@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
@@ -39,25 +39,50 @@ type PostBox = {
 };
 
 export type PostBoxProps = {
+  postId: string;
   filePath: string;
+};
+
+type UserData = {
+  _id: string;
+  email: string;
+  birthday?: string;
+  name: string;
+  profile?: string;
+  role?: number;
 };
 
 export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
   const user = useSelector((state: RootState) => state.user.user);
+  const [userData, setUserData] = useState<UserData>(user);
   const [postBoxes, setPostBoxes] = useState<PostBox[]>([]);
 
   useEffect(() => {
-    if (!isLogin) {
-      navigate('/login');
+    if (user._id === id) {
+      setUserData(user);
+    } else {
+      if (id) getUserData(id);
     }
 
-    if (user._id) {
-      getUserPosts(user._id);
+    if (userData._id) {
+      getUserPosts(userData._id);
     }
   }, []);
+
+  const getUserData = async (userId: string) => {
+    try {
+      const userRes = await UserAPI.getUser(userId);
+      const user = userRes.data.user;
+      setUserData(user);
+      console.log(user);
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
 
   const getUserPosts = async (userId: string) => {
     dispatch(setIsLoading(true));
@@ -96,22 +121,28 @@ export default function Profile() {
   };
 
   const renderPostBoxes = postBoxes.map((postBox: PostBox) => {
-    return <PostBox key={postBox.postId} filePath={postBox.filePath} />;
+    return (
+      <PostBox
+        key={postBox.postId}
+        postId={postBox.postId}
+        filePath={postBox.filePath}
+      />
+    );
   });
 
   return (
     <div className={styles.container}>
       <div className={styles.userProfile}>
         <div className={styles.userImage}>
-          {user.profile ? (
-            <img src={user.profile} alt="사용자 프로필 사진" />
+          {userData.profile ? (
+            <img src={userData.profile} alt="사용자 프로필 사진" />
           ) : (
             <FaUserCircle />
           )}
         </div>
 
         <div className={styles.userInfo}>
-          <h3>{user.name}</h3>
+          <h3>{userData.name}</h3>
           <div className={styles.userNumbers}>
             <div className={styles.userPostNum}>
               <h4>게시물</h4>

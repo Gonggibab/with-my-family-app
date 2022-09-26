@@ -135,4 +135,14 @@ const logout = async (req: Request, res: Response) => {
   );
 };
 
-export { register, checkDuplicateEmail, login, userAuth, logout };
+// Find User
+const findUser = async (req: Request, res: Response) => {
+  UserModel.findOne({ _id: req.body.userId }, (err: Error, user: IUser) => {
+    if (err) {
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({ user });
+  });
+};
+
+export { register, checkDuplicateEmail, login, userAuth, logout, findUser };

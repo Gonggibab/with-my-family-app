@@ -5,6 +5,7 @@ import {
   login,
   userAuth,
   logout,
+  findUser,
 } from '../api/user';
 import { auth } from '../middleware/auth';
 
@@ -15,5 +16,6 @@ router.post('/isDupEmail', checkDuplicateEmail);
 router.post('/login', login);
 router.get('/auth', auth, userAuth);
 router.get('/logout', auth, logout);
+router.post('/findUser', findUser);
 
 export default router;

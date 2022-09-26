@@ -51,6 +51,11 @@ button {
   background: transparent;
 }
 
+ul {
+  list-style: none;
+  padding-left: 0px;
+}
+
 h1, h2, h3, h4, h5 {
   margin: 0;
   padding: 0;
@@ -67,24 +72,6 @@ input, textarea {
   transition: all 0.2s;
 }
 
-/* TextArea Scroll Bar properties */
-textarea {
-  padding-right: .4rem;
-
-  &::-webkit-scrollbar {
-    width: .4rem;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: var(--nav-border-color);
-    border-radius: .5rem;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-}
-
 /* Prevent Selection */
 a, button, img {
   -webkit-user-select:none;
@@ -94,20 +81,20 @@ a, button, img {
 }
 
 /* Scroll Bar properties */
-body::-webkit-scrollbar {
-  width: .5rem;  
+*::-webkit-scrollbar {
+  width: .4rem;  
   
   @include mixins.device(tablet) {
     width: 0px;
   } 
 }
 
-body::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: var(--nav-border-color);
   border-radius: .5rem;
 }
 
-body::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: transparent;
 }
 

@@ -9,7 +9,13 @@ export const PostAPI = {
   upload: (data: PostDataType) => {
     return HttpRequest.post('/api/posts/upload', data);
   },
+  getPost: (postId: string) => {
+    return HttpRequest.post('/api/posts/findPost', { postId });
+  },
   getByUser: (userId: string) => {
     return HttpRequest.post('/api/posts/findByUser', { userId });
+  },
+  delete: (postId: string) => {
+    return HttpRequest.post('/api/posts/deletePost', { postId });
   },
 };

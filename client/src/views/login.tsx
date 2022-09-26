@@ -33,7 +33,7 @@ export default function Login() {
 
   useEffect(() => {
     if (isLogin) {
-      navigate('/profile');
+      navigate('/');
     }
 
     setEmail(emailRef.current!.value);

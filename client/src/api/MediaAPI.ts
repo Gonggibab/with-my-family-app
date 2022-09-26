@@ -35,4 +35,7 @@ export const MediaAPI = {
   getByPost: (postId: string) => {
     return HttpRequest.post('/api/media/findByPost', { postId });
   },
+  deleteByPost: (postId: string) => {
+    return HttpRequest.post('/api/media/deleteMedia', { postId });
+  },
 };

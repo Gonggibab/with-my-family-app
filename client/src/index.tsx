@@ -14,6 +14,7 @@ import Chat from 'views/chat';
 import Setting from 'views/setting';
 import Register from 'views/register';
 import FindAccount from 'views/findAccount';
+import Post from 'views/post';
 
 import 'styles/globals.scss';
 
@@ -27,13 +28,14 @@ root.render(
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/addPost" element={<AddPost />} />
+            <Route path="addPost" element={<AddPost />} />
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
             <Route path="login/findAccount" element={<FindAccount />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:id" element={<Profile />} />
             <Route path="chat" element={<Chat />} />
             <Route path="setting" element={<Setting />} />
+            <Route path="post/:id" element={<Post />} />
           </Routes>
         </Layout>
       </BrowserRouter>

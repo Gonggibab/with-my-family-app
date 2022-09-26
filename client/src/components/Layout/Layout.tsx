@@ -29,6 +29,7 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const user = useSelector((state: RootState) => state.user.user);
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
   const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
   const currentPage = useSelector((state: RootState) => state.app.currentPage);
@@ -69,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
             <span>홈</span>
           </Link>
           <Link
-            to={isLogin ? '/profile' : '/login'}
+            to={isLogin ? `/profile/${user._id}` : '/login'}
             className={
               checkCategory(currentPage, '/profile') ||
               checkCategory(currentPage, '/login')
@@ -78,7 +79,7 @@ export default function Layout({ children }: LayoutProps) {
             }
           >
             {isLogin ? (
-              <FaUserCircle size={25} />
+              <FaUserCircle size={24} />
             ) : (
               <RiLoginBoxFill size={25} />
             )}
