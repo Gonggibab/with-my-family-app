@@ -1,0 +1,183 @@
+@use '../abstacts/colors';
+@use '../abstacts/mixins';
+@use '../abstacts/variables';
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  padding-left: calc(variables.$desktop-navbar-width + 2rem);
+  width: 100vw;
+  height: 100vh;
+
+  @include mixins.device(mobile) {
+    padding: 1rem;
+    padding-top: calc(variables.$mobile-navbar-height + 1rem);
+    min-width: variables.$minimum-device-width;
+    min-height: variables.$minimum-device-height;
+  }
+
+  .searchFamily {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;    
+    min-height: 5rem;
+
+    .searchInput {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      width: 20rem;
+      height: 2rem;
+      font-size: .8em;
+      transition: all 0.2s ease-in;
+    
+      input {   
+        margin-right: .4rem;
+        padding: .2rem .4rem;       
+        width: 100%;
+        height: 100%;
+        border-radius: .2rem;
+        color: inherit;
+        background: var(--profile-hr-color);
+        
+        &:focus::placeholder {         
+          color: transparent;
+          transition: all 0.1s;
+        }
+    
+        &::placeholder{
+          color: var(--color);
+          font-size: .8rem;
+          opacity: .6;  
+        }
+      }
+    }
+
+    .message {
+      font-weight: bold;
+      margin-top: 1rem;      
+    }
+
+    .searchBtn {
+      width: 4rem;
+      height: 100%;
+      border-radius: 10%;
+      font-weight: bold;
+      color: colors.$white;
+      background-color: colors.$blue;
+      transition: all .2s ease-in;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+
+    .foundUsers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1rem;
+      width: 100%;
+      max-height: 30vh;
+      overflow-y: scroll;      
+    }
+  }
+
+  hr {
+    width: 100%;
+    border: 1px solid var(--profile-hr-color);
+  }
+
+
+  
+
+  .familyList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+    flex-wrap: wrap;
+
+    @include mixins.device(tablet) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    .familyBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      margin: auto;
+      padding: .8rem 1rem;
+      width: 20rem;
+      height: 10rem;
+      border-radius: 1rem;
+      background-color: var(--component-color);
+
+      .familyProfile {
+        display: flex;
+        align-items: center;
+        margin-bottom: .4rem;
+        width: 100%;
+        height: 80%;
+        
+        & > img {
+          margin-right: 1rem;
+          width: 5rem;
+          height: 5rem;
+          border-radius: 50%;
+        }
+
+        .familyInfo {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: .4rem;
+          font-weight: bold;
+
+          .relationship{
+            margin-bottom: .4rem;
+            font-size: 1.8rem;
+          }
+
+          .name {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .buttons {
+        & > button {
+          padding: .4rem .8rem;
+          font-size: .8rem;
+          font-weight: bold;
+          border-radius: .8rem;
+        }
+
+        .profileBtn {
+          color: colors.$white;
+          background-color: colors.$blue;
+
+          &:hover {
+            color: colors.$blue;
+            background-color: colors.$white;
+          }
+        }
+
+        .messageBtn {
+          margin-left: 2rem;
+          color: var(--bg-color);
+          background-color: var(--color);
+
+          &:hover {
+            color: var(--color);
+            background-color: var(--bg-color);
+          }
+        }
+      }
+    }
+  }
+}

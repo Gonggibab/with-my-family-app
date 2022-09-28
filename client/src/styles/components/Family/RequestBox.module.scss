@@ -1,0 +1,64 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.RequestBox {
+  display: flex;
+  align-items: center;
+  padding: .4rem .8rem;
+  width: 20rem;
+  height: 3rem;
+  border-radius: .4rem;
+  background-color: var(--component-color);
+
+  img {
+    margin-right: .4rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+  }
+
+  svg {
+    margin-right: .4rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+
+    span {
+      font-size: .7rem;
+      font-weight: bold;
+    }
+  }
+  
+  & > button {
+    padding: .4rem .6rem;
+    font-weight: bold;
+    border-radius: 10%;
+  }
+
+  .acceptBtn {
+    margin-left: auto;
+    color: colors.$white;
+    background-color: colors.$blue;
+
+    &:hover {
+      color: colors.$blue;
+      background-color: colors.$white;
+    }
+  }
+
+  .rejectBtn {
+    margin-left: .4rem;
+    color: var(--bg-color);
+    background-color: var(--color);
+
+    &:hover {
+      color: var(--color);
+      background-color: var(--bg-color);
+    }
+  }
+}      

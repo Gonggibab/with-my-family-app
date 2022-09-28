@@ -145,4 +145,27 @@ const findUser = async (req: Request, res: Response) => {
   });
 };
 
-export { register, checkDuplicateEmail, login, userAuth, logout, findUser };
+// Search User
+const searchUser = async (req: Request, res: Response) => {
+  UserModel.find(
+    {
+      $text: { $search: req.body.string },
+    },
+    (err: Error, user: IUser[]) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+      return res.status(200).json({ user });
+    }
+  );
+};
+
+export {
+  register,
+  checkDuplicateEmail,
+  login,
+  userAuth,
+  logout,
+  findUser,
+  searchUser,
+};

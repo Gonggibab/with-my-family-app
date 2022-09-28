@@ -78,7 +78,6 @@ export default function Profile() {
       const userRes = await UserAPI.getUser(userId);
       const user = userRes.data.user;
       setUserData(user);
-      console.log(user);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }

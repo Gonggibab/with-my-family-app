@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PostAPI } from 'api/PostAPI';
@@ -11,7 +11,22 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
   const navigate = useNavigate();
   const [isConfirm, setIsConfirm] = useState<boolean>(false);
 
-  const onDeleteClicked = async () => {
+  const onBgClicked = () => {
+    setIsMenuOpen(false);
+  };
+
+  const onDeleteClicked = (e: MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation();
+    setIsConfirm(true);
+  };
+
+  const onCancelClicked = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setIsConfirm(false);
+  };
+
+  const onConfirmClicked = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     try {
       await PostAPI.delete(postId);
       await MediaAPI.deleteByPost(postId);
@@ -22,10 +37,10 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={onBgClicked}>
       {!isConfirm ? (
         <ul className={styles.PostMenu}>
-          <li className={styles.delete} onClick={() => setIsConfirm(true)}>
+          <li className={styles.delete} onClick={(e) => onDeleteClicked(e)}>
             삭제
           </li>
           <hr />
@@ -37,12 +52,15 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
         <div className={styles.confirmMsg}>
           <span>정말로 삭제하시겠습니까?</span>
           <div className={styles.buttons}>
-            <button className={styles.confirmBtn} onClick={onDeleteClicked}>
+            <button
+              className={styles.confirmBtn}
+              onClick={(e) => onConfirmClicked(e)}
+            >
               확인
             </button>
             <button
               className={styles.cancelBtn}
-              onClick={() => setIsConfirm(false)}
+              onClick={(e) => onCancelClicked(e)}
             >
               취소
             </button>

@@ -29,6 +29,11 @@ export type GoogleLoginDataType = {
   role: number;
 };
 
+export type FamilyRequestDataType = {
+  requesterId: string;
+  requesteeId: string;
+};
+
 export const UserAPI = {
   register: (data: UserDataType) => {
     return HttpRequest.post('/api/users/register', data);
@@ -53,5 +58,8 @@ export const UserAPI = {
   },
   getUser: (userId: string) => {
     return HttpRequest.post('/api/users/findUser', { userId });
+  },
+  searchUser: (string: string) => {
+    return HttpRequest.post('/api/users/searchUser', { string });
   },
 };

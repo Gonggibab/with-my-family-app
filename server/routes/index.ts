@@ -4,12 +4,14 @@ import naverRoute from './NaverRoute';
 import googleRoute from './GoogleRoute';
 import postRoute from './PostRoute';
 import mediaRoute from './MediaRoute';
+import familyRequestRoute from './FamilyRequestRoute';
 
 const router: Router = express.Router();
 
 router.use('/users', userRoute);
 router.use('/naver', naverRoute);
 router.use('/google', googleRoute);
+router.use('/familyRequest', familyRequestRoute);
 router.use('/posts', postRoute);
 router.use('/media', mediaRoute);
 

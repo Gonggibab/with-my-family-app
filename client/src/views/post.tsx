@@ -3,12 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { MediaAPI } from 'api/MediaAPI';
 import { PostAPI } from 'api/PostAPI';
+import PostMenu from 'components/Post/PostMenu';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
-import { BsThreeDots } from 'react-icons/bs';
+import {
+  BsFillChatFill,
+  BsHandThumbsUpFill,
+  BsThreeDots,
+} from 'react-icons/bs';
 
 import styles from 'styles/views/Post.module.scss';
-import PostMenu from 'components/Post/PostMenu';
 
 type PostInfo = {
   uploader: string;
@@ -129,6 +133,15 @@ export default function Post() {
                 <span>{calcDateDiff(postInfo.updatedAt)}</span>
               </div>
             </div>
+            <button className={styles.moreCommentBtn}>댓글 더보기</button>
+          </div>
+          <div className={styles.buttons}>
+            <button className={styles.ddabong}>
+              <BsHandThumbsUpFill />
+            </button>
+            <button className={styles.chat}>
+              <BsFillChatFill />
+            </button>
           </div>
           <div className={styles.commentInput}>
             <textarea

@@ -11,7 +11,7 @@ import AddPost from 'views/addPost';
 import Login from 'views/login';
 import Profile from 'views/profile';
 import Chat from 'views/chat';
-import Setting from 'views/setting';
+import Family from 'views/family';
 import Register from 'views/register';
 import FindAccount from 'views/findAccount';
 import Post from 'views/post';
@@ -34,7 +34,7 @@ root.render(
             <Route path="login/findAccount" element={<FindAccount />} />
             <Route path="profile/:id" element={<Profile />} />
             <Route path="chat" element={<Chat />} />
-            <Route path="setting" element={<Setting />} />
+            <Route path="family" element={<Family />} />
             <Route path="post/:id" element={<Post />} />
           </Routes>
         </Layout>

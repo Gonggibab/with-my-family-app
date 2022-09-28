@@ -16,7 +16,11 @@ export default function PostBox({ postId, filePath }: PostBoxProps) {
       onMouseLeave={() => setIsHover(false)}
       onClick={() => navigate(`/post/${postId}`)}
     >
-      <img src={`http://localhost:5000/${filePath}`} alt="게시물 사진" />
+      <img
+        src={`http://localhost:5000/${filePath}`}
+        alt="게시물 사진"
+        style={isHover ? { filter: `brightness(80%)` } : {}}
+      />
       {isHover && <span>게시물 열기</span>}
     </div>
   );

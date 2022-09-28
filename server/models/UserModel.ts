@@ -62,6 +62,9 @@ const userSchema = new mongoose.Schema<IUser, UserStatics>(
   { timestamps: true }
 );
 
+// create indexes for the fields to search
+userSchema.index({ email: 'text' });
+
 // Encrypt user password before saving into DB
 userSchema.pre('save', function (next) {
   const user = this;
