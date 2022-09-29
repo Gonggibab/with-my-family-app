@@ -20,16 +20,32 @@ const sendRequest = (req: Request, res: Response) => {
 
 // Find Request
 const findRequest = (req: Request, res: Response) => {
-  console.log(req.body.userId);
-  FamilyRequestModel.findOne(
-    { requesteeId: req.body.userId },
-    (err: Error, request: IFamilyRequest) => {
+  FamilyRequestModel.find({ requesteeId: req.body.userId })
+    .populate('requesterId')
+    .exec(function (err, request) {
       if (err) {
+        console.log(err);
         return res.status(400).json({ err });
       }
       return res.status(200).json({ request });
+    });
+};
+
+// Find Request
+const deleteRequest = (req: Request, res: Response) => {
+  FamilyRequestModel.deleteOne(
+    { _id: req.body.requestId },
+    (err: Error, request: IFamilyRequest) => {
+      if (err)
+        return res.status(400).json({
+          err,
+        });
+
+      return res.status(200).json({
+        request,
+      });
     }
   );
 };
 
-export { sendRequest, findRequest };
+export { sendRequest, findRequest, deleteRequest };

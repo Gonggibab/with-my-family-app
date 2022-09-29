@@ -91,10 +91,13 @@
   hr {
     width: 100%;
     border: 1px solid var(--profile-hr-color);
+  } 
+
+  .requestList {
+    & > span {
+      font-weight: bold;
+    }
   }
-
-
-  
 
   .familyList {
     display: grid;
@@ -104,80 +107,6 @@
 
     @include mixins.device(tablet) {
       grid-template-columns: repeat(1, 1fr);
-    }
-
-    .familyBox {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      margin: auto;
-      padding: .8rem 1rem;
-      width: 20rem;
-      height: 10rem;
-      border-radius: 1rem;
-      background-color: var(--component-color);
-
-      .familyProfile {
-        display: flex;
-        align-items: center;
-        margin-bottom: .4rem;
-        width: 100%;
-        height: 80%;
-        
-        & > img {
-          margin-right: 1rem;
-          width: 5rem;
-          height: 5rem;
-          border-radius: 50%;
-        }
-
-        .familyInfo {
-          display: flex;
-          flex-direction: column;
-          margin-bottom: .4rem;
-          font-weight: bold;
-
-          .relationship{
-            margin-bottom: .4rem;
-            font-size: 1.8rem;
-          }
-
-          .name {
-            font-size: 1rem;
-          }
-        }
-      }
-
-      .buttons {
-        & > button {
-          padding: .4rem .8rem;
-          font-size: .8rem;
-          font-weight: bold;
-          border-radius: .8rem;
-        }
-
-        .profileBtn {
-          color: colors.$white;
-          background-color: colors.$blue;
-
-          &:hover {
-            color: colors.$blue;
-            background-color: colors.$white;
-          }
-        }
-
-        .messageBtn {
-          margin-left: 2rem;
-          color: var(--bg-color);
-          background-color: var(--color);
-
-          &:hover {
-            color: var(--color);
-            background-color: var(--bg-color);
-          }
-        }
-      }
-    }
+    }    
   }
 }

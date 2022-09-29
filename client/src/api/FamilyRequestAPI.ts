@@ -12,4 +12,7 @@ export const FamilyRequestAPI = {
   getFamilyRequest: (userId: string) => {
     return HttpRequest.post('/api/familyRequest/getRequest', { userId });
   },
+  deleteFamilyRequest: (requestId: string) => {
+    return HttpRequest.post('/api/familyRequest/deleteRequest', { requestId });
+  },
 };

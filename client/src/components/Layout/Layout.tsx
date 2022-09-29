@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { AiFillHome } from 'react-icons/ai';
-import { FaUserCircle, FaUserFriends } from 'react-icons/fa';
-import { BsFillChatFill } from 'react-icons/bs';
-import { RiLoginBoxFill } from 'react-icons/ri';
 
 import { UserAPI } from 'api/UserAPI';
 import { RootState } from 'redux/store';
@@ -17,10 +13,13 @@ import { setIsLogin, setUser } from 'redux/_slices/userSlice';
 import { checkCategory } from 'utils/checkCategory';
 import ToggleSwitch from 'components/Layout/ToggleSwitch';
 import Loader from 'components/Loader';
+import { AiFillHome } from 'react-icons/ai';
+import { FaUserCircle, FaUserFriends } from 'react-icons/fa';
+import { BsFillChatFill } from 'react-icons/bs';
+import { RiLoginBoxFill } from 'react-icons/ri';
 
 import styles from 'styles/components/Layout/Layout.module.scss';
 import logo from 'assets/logo.svg';
-import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -57,13 +56,6 @@ export default function Layout({ children }: LayoutProps) {
       const userRes = await UserAPI.auth();
       dispatch(setIsLogin(userRes.data.isLogin));
       dispatch(setUser(userRes.data.user));
-
-      const userId = userRes.data.user._id;
-      if (userId) {
-        console.log('request sent');
-        const famReqRes = await FamilyRequestAPI.getFamilyRequest(userId);
-        console.log(famReqRes.data);
-      }
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }

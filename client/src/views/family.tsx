@@ -1,14 +1,16 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { setIsLoading } from 'redux/_slices/appSlice';
-import UserBox from 'components/Family/UserBox';
 import { UserAPI } from 'api/UserAPI';
+import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
+import { RealtionshipAPI } from 'api/RelationshipAPI';
+import UserBox from 'components/Family/UserBox';
+import RequestBox from 'components/Family/RequestBox';
+import FamilyBox from 'components/Family/FamilyBox';
 
 import styles from 'styles/views/Family.module.scss';
-import profileDad from 'assets/images/testProfileDad.jpg';
-import RequestBox from 'components/Family/RequestBox';
 
 type UserInfo = {
   userId: string;
@@ -16,9 +18,35 @@ type UserInfo = {
   profile: string;
 };
 
+type FamilyRequests = {
+  requestId: string;
+  requesterId: string;
+  name: string;
+  profile: string;
+};
+
+type FamilyData = {
+  relationId: string;
+  name: string;
+  profile: string;
+  relationship: string;
+};
+
 export type UserBoxProps = {
   messageRef: React.RefObject<HTMLSpanElement>;
   user: UserInfo;
+};
+
+export type RequestBoxProps = {
+  fetchFamilyRequest: () => void;
+  fetchFamilyData: () => void;
+  request: FamilyRequests;
+};
+
+export type FamilyBoxProps = {
+  fetchFamilyRequest: () => void;
+  fetchFamilyData: () => void;
+  family: FamilyData;
 };
 
 export default function Friends() {
@@ -27,14 +55,69 @@ export default function Friends() {
   const user = useSelector((state: RootState) => state.user.user);
   const [searchEmail, setSearchEmail] = useState('');
   const [foundUsers, setFoundUsers] = useState<UserInfo[]>([]);
+  const [familyRequests, setFamilyRequests] = useState<FamilyRequests[]>([]);
+  const [families, setFamilies] = useState<FamilyData[]>([]);
+
+  useEffect(() => {
+    if (user._id) {
+      fetchFamilyRequest();
+      fetchFamilyData();
+    }
+  }, [user]);
+
+  const fetchFamilyRequest = async () => {
+    try {
+      dispatch(setIsLoading(true));
+      const reqRes = await FamilyRequestAPI.getFamilyRequest(user._id);
+      const requestList = [];
+      for (const request of reqRes.data.request) {
+        requestList.push({
+          requestId: request._id,
+          requesterId: request.requesterId._id,
+          name: request.requesterId.name,
+          profile: request.requesterId.profile,
+        });
+      }
+      setFamilyRequests(requestList);
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
+
+  const fetchFamilyData = async () => {
+    try {
+      dispatch(setIsLoading(true));
+      const reqRelation = await RealtionshipAPI.getRelationship(user._id);
+      const relationList = [];
+      for (const relation of reqRelation.data.relationship) {
+        relationList.push({
+          relationId: relation._id,
+          name: relation.familyId.name,
+          profile: relation.familyId.profile,
+          relationship: relation.relationship,
+        });
+      }
+      setFamilies(relationList);
+      dispatch(setIsLoading(false));
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
 
   const onSearchClicked = async (str: string) => {
     try {
       dispatch(setIsLoading(true));
       const userRes = await UserAPI.searchUser(str);
+      const relationRes = await RealtionshipAPI.getRelationship(user._id);
+      const relationIdList = [];
+      for (const relation of relationRes.data.relationship) {
+        relationIdList.push(relation.familyId._id);
+      }
+
       const userList = [];
       for (const userData of userRes.data.user) {
-        if (user._id === userData._id) continue;
+        if (userData._id === user._id) continue;
+        if (relationIdList.includes(userData._id)) continue;
         userList.push({
           userId: userData._id,
           name: userData.name,
@@ -50,11 +133,35 @@ export default function Friends() {
         message.innerHTML = '';
       }
       dispatch(setIsLoading(false));
-    } catch (error) {}
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
   };
 
   const renderUserList = foundUsers.map((user) => {
     return <UserBox key={user.userId} messageRef={messageRef} user={user} />;
+  });
+
+  const renderRequestList = familyRequests.map((request) => {
+    return (
+      <RequestBox
+        key={request.requestId}
+        fetchFamilyRequest={fetchFamilyRequest}
+        fetchFamilyData={fetchFamilyData}
+        request={request}
+      />
+    );
+  });
+
+  const renderFamilyList = families.map((family) => {
+    return (
+      <FamilyBox
+        key={family.relationId}
+        fetchFamilyRequest={fetchFamilyRequest}
+        fetchFamilyData={fetchFamilyData}
+        family={family}
+      />
+    );
   });
 
   return (
@@ -74,28 +181,18 @@ export default function Friends() {
           </button>
         </div>
         <span className={styles.message} ref={messageRef} />
-        <div className={styles.foundUsers}> {renderUserList}</div>
+        <div className={styles.foundUsers}>{renderUserList}</div>
       </div>
       <hr />
       <div className={styles.requestList}>
-        <RequestBox />
+        {familyRequests.length === 0 ? (
+          <span>가족 요청이 없습니다</span>
+        ) : (
+          renderRequestList
+        )}
       </div>
       <hr />
-      <div className={styles.familyList}>
-        <div className={styles.familyBox}>
-          <div className={styles.familyProfile}>
-            <img src={profileDad} alt="사용자 프로필" />
-            <div className={styles.familyInfo}>
-              <span className={styles.relationship}>아빠</span>
-              <span className={styles.name}>정모씨</span>
-            </div>
-          </div>
-          <div className={styles.buttons}>
-            <button className={styles.profileBtn}>프로필 보기</button>
-            <button className={styles.messageBtn}>메세지</button>
-          </div>
-        </div>
-      </div>
+      <div className={styles.familyList}>{renderFamilyList}</div>
     </div>
   );
 }

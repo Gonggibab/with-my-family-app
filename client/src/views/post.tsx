@@ -6,6 +6,7 @@ import { PostAPI } from 'api/PostAPI';
 import PostMenu from 'components/Post/PostMenu';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
+import { FaUserCircle } from 'react-icons/fa';
 import {
   BsFillChatFill,
   BsHandThumbsUpFill,
@@ -105,7 +106,11 @@ export default function Post() {
         </button>
         <section className={styles.mediaBox}>
           <div className={styles.uploader}>
-            <img src={postInfo.profile} alt="이미지" />
+            {postInfo.profile ? (
+              <img src={postInfo.profile} alt="사용자 프로필" />
+            ) : (
+              <FaUserCircle />
+            )}
             <span>{postInfo.uploader}</span>
           </div>
           <div className={styles.media}>

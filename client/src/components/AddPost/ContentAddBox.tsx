@@ -7,6 +7,7 @@ import { PostAPI } from 'api/PostAPI';
 import { MediaAPI } from 'api/MediaAPI';
 import { ContentAddBoxProps } from './addPostBox';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
+import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/components/AddPost/ContentAddBox.module.scss';
 import { setIsLoading } from 'redux/_slices/appSlice';
@@ -79,7 +80,11 @@ export default function ContentAddBox({
       </div>
       <div className={styles.contentAddZone}>
         <div className={styles.uploaderInfo}>
-          <img src={user.profile} alt="프로필사진" />
+          {user.profile ? (
+            <img src={user.profile} alt="사용자 프로필" />
+          ) : (
+            <FaUserCircle />
+          )}
           <span>{user.name}</span>
         </div>
         <textarea

@@ -1,9 +1,18 @@
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
+import { Server, Socket } from 'socket.io';
+import { createServer } from 'http';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import apiRoute from './routes';
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData,
+} from './types/websocket';
+import userSocket from './sockets/userHandler';
 
 dotenv.config();
 const app: Express = express();
@@ -32,6 +41,32 @@ app.use('/api', apiRoute);
 
 app.use('/uploads', express.static('uploads'));
 
-app.listen(process.env.PORT, () => {
+const httpServer = createServer(app);
+const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>(httpServer, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
+
+const onConnection = (
+  socket: Socket<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >
+) => {
+  userSocket(io, socket);
+};
+
+io.on('connection', onConnection);
+
+httpServer.listen(process.env.PORT, () => {
   console.log(`App listening on port ${process.env.PORT}`);
 });
