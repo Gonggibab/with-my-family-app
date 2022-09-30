@@ -10,6 +10,8 @@ import {
   updateIsDarkMode,
 } from 'redux/_slices/appSlice';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
+import { RelationshipAPI } from 'api/RelationshipAPI';
+import fetchFamilyData from 'utils/fetchFamilyData';
 import { checkCategory } from 'utils/checkCategory';
 import ToggleSwitch from 'components/Layout/ToggleSwitch';
 import Loader from 'components/Loader';
@@ -20,6 +22,7 @@ import { RiLoginBoxFill } from 'react-icons/ri';
 
 import styles from 'styles/components/Layout/Layout.module.scss';
 import logo from 'assets/logo.svg';
+import fetchFamilyRequest from 'utils/fetchFamilyRequest';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -35,27 +38,33 @@ export default function Layout({ children }: LayoutProps) {
   const isLoading = useSelector((state: RootState) => state.app.isLoading);
 
   useEffect(() => {
+    dispatch(setIsLoading(true));
     dispatch(setCurrentPage(location.pathname));
+    fetchUserData();
+    dispatch(setIsLoading(false));
   }, [dispatch, location.pathname]);
 
   useEffect(() => {
-    dispatch(setIsLoading(true));
-    fetchUserData();
-
-    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const localTheme = localStorage.getItem('color-theme');
+    const OStheme = window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
+    const theme = localTheme ? localTheme : OStheme;
 
     dispatch(updateIsDarkMode(theme === 'dark'));
+    localStorage.setItem('color-theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
-    dispatch(setIsLoading(false));
-  }, [dispatch]);
+  }, []);
 
   const fetchUserData = async () => {
     try {
       const userRes = await UserAPI.auth();
       dispatch(setIsLogin(userRes.data.isLogin));
-      dispatch(setUser(userRes.data.user));
+      if (userRes.data.isLogin) {
+        dispatch(setUser(userRes.data.user));
+        fetchFamilyData(userRes.data.user._id, dispatch);
+        fetchFamilyRequest(userRes.data.user._id, dispatch);
+      }
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }

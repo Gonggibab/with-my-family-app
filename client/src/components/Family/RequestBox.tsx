@@ -1,29 +1,28 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
-import { RealtionshipAPI } from 'api/RelationshipAPI';
+import { RelationshipAPI } from 'api/RelationshipAPI';
 import { RequestBoxProps } from 'views/family';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/components/Family/RequestBox.module.scss';
 import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
+import fetchFamilyRequest from 'utils/fetchFamilyRequest';
+import fetchFamilyData from 'utils/fetchFamilyData';
 
-export default function RequestBox({
-  fetchFamilyRequest,
-  fetchFamilyData,
-  request,
-}: RequestBoxProps) {
-  const curUser = useSelector((state: RootState) => state.user.user);
+export default function RequestBox({ request }: RequestBoxProps) {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.user);
 
   const onAcceptClicked = async () => {
     try {
-      await RealtionshipAPI.addRelationship({
-        user1Id: curUser._id,
+      await RelationshipAPI.addRelationship({
+        user1Id: user._id,
         user2Id: request.requesterId,
       });
       await FamilyRequestAPI.deleteFamilyRequest(request.requestId);
-      fetchFamilyRequest();
-      fetchFamilyData();
+      fetchFamilyRequest(user._id, dispatch);
+      fetchFamilyData(user._id, dispatch);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
@@ -32,8 +31,8 @@ export default function RequestBox({
   const onRejectClicked = async () => {
     try {
       await FamilyRequestAPI.deleteFamilyRequest(request.requestId);
-      fetchFamilyRequest();
-      fetchFamilyData();
+      fetchFamilyRequest(user._id, dispatch);
+      fetchFamilyData(user._id, dispatch);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }

@@ -2,8 +2,6 @@
 @use '../../abstacts/mixins';
 @use '../../abstacts/variables';
 
-
-
 .post {
   display: flex;
   flex-direction: column;
@@ -37,7 +35,7 @@
       height: 40px;
     }
   
-    .profile {
+    & > img, svg {
       position: relative;
       width: 40px;
       height: 40px;
@@ -56,6 +54,8 @@
       font-weight: bold;
     }
   }
+
+
   
   .media {
     flex-grow: 1;
@@ -68,7 +68,42 @@
       height: calc(100% - 50px);
       min-height: 200px;
     }
+
+    img, video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      border-radius: .5rem;
+    }
+
+    svg {
+      z-index: 1;
+      position: absolute;      
+      top: 50%;      
+      width: 2rem;
+      height: 2rem;
+      border-radius: 2rem;
+      color: colors.$white;
+      background-color: rgba(0, 0, 0, 0.4);
+      transition: all .2s ease-in;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+        transform: scale(1.1);
+      }
+    }
+
+    .leftArrow {
+      left: 1rem;
+    }
+
+    .rightArrow {
+      right: 1rem;
+    }
   }
+
+
   
   .buttons {
     display: flex;
@@ -118,46 +153,12 @@
     }
   }
 
-  .comments {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: .5rem;
-    padding-left: .5rem;
-    width: 100%;
-
-    .comment {
-      display: flex;
-      align-items: center;
-      font-size: .8rem;
-
-      .commenter {
-        font-weight: bold;
-      }
-
-      p {
-        padding-left: .5rem;
-        font-weight: lighter;
-      }
-
-      .commentDate {
-        padding-left: .5rem;
-        opacity: .6;
-        font-size: .5rem;
-        font-weight: lighter;
-      }
-    }
-  }
-
-  button {
+  .moreCommentsBtn {
     padding-top: .5rem;
     padding-bottom: .5rem;
     font-size: .8rem;
+    font-weight: bold;
+    text-decoration: underline;
     color: inherit;
   }
-
-  .input {
-    display: none;
-  }
-
 }

@@ -1,7 +1,9 @@
 import { MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'redux/store';
 
-import { RealtionshipAPI } from 'api/RelationshipAPI';
+import { RelationshipAPI } from 'api/RelationshipAPI';
+import fetchFamilyData from 'utils/fetchFamilyData';
 import { FamilyBoxMenuProps } from './FamilyBox';
 
 import styles from 'styles/components/Family/FamilyBoxMenu.module.scss';
@@ -9,9 +11,9 @@ import styles from 'styles/components/Family/FamilyBoxMenu.module.scss';
 export default function FamilyBoxMenu({
   relationId,
   setIsMenuOpen,
-  fetchFamilyData,
 }: FamilyBoxMenuProps) {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.user);
   const [isConfirm, setIsConfirm] = useState<boolean>(false);
 
   const onBgClicked = () => {
@@ -31,8 +33,8 @@ export default function FamilyBoxMenu({
   const onConfirmClicked = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     try {
-      await RealtionshipAPI.deleteRelationship(relationId);
-      fetchFamilyData();
+      await RelationshipAPI.deleteRelationship(relationId);
+      fetchFamilyData(user._id, dispatch);
       setIsMenuOpen(false);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);

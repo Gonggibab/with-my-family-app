@@ -31,7 +31,7 @@ const findRequest = (req: Request, res: Response) => {
     });
 };
 
-// Find Request
+// Delete Request
 const deleteRequest = (req: Request, res: Response) => {
   FamilyRequestModel.deleteOne(
     { _id: req.body.requestId },

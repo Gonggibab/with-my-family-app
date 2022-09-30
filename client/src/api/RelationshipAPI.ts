@@ -5,7 +5,7 @@ export type RelationshipDataType = {
   user2Id: string;
 };
 
-export const RealtionshipAPI = {
+export const RelationshipAPI = {
   addRelationship: (data: RelationshipDataType) => {
     return HttpRequest.post('/api/relationShip/addRelationship', data);
   },

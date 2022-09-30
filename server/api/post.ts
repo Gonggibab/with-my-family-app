@@ -60,4 +60,19 @@ const deletePost = (req: Request, res: Response) => {
   });
 };
 
-export { upload, findPost, findByUser, deletePost };
+// Get Recent Posts from Families
+const getRecentPost = (req: Request, res: Response) => {
+  PostModel.find({ userId: { $in: req.body.userIdList } })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .populate('userId')
+    .exec(function (err, posts) {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ err });
+      }
+      return res.status(200).json({ posts });
+    });
+};
+
+export { upload, findPost, findByUser, deletePost, getRecentPost };

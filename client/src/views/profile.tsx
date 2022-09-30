@@ -3,8 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
-import { setIsLogin, setUser } from 'redux/_slices/userSlice';
 import { setIsLoading } from 'redux/_slices/appSlice';
+import {
+  setFamilies,
+  setFamilyRequests,
+  setIsLogin,
+  setUser,
+} from 'redux/_slices/userSlice';
 import { UserAPI } from 'api/UserAPI';
 import { PostAPI } from 'api/PostAPI';
 import { MediaAPI } from 'api/MediaAPI';
@@ -16,19 +21,6 @@ import { FaUserCircle } from 'react-icons/fa';
 type PostData = {
   _id: string;
   content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
-
-type MediaData = {
-  _id: string;
-  postId?: string;
-  userId?: string;
-  filename: string;
-  filePath: string;
-  mimeType: string;
-  originalName: string;
-  size: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -56,14 +48,15 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const isLogin = useSelector((state: RootState) => state.user.isLogin);
   const user = useSelector((state: RootState) => state.user.user);
   const [userData, setUserData] = useState<UserData>(user);
   const [postBoxes, setPostBoxes] = useState<PostBox[]>([]);
+  const [isMyProfile, setIsMyProfile] = useState<boolean>(false);
 
   useEffect(() => {
     if (user._id === id) {
       setUserData(user);
+      setIsMyProfile(true);
     } else {
       if (id) getUserData(id);
     }
@@ -107,16 +100,26 @@ export default function Profile() {
     dispatch(setIsLoading(false));
   };
 
-  const onLogoutClicked = () => {
-    UserAPI.logout().then((res) => {
-      if (res.status === 400) {
-        console.log('오류가 발생했습니다. 다시 시도해 주세요');
-      } else {
-        dispatch(setIsLogin(res.data.isLogin));
-        dispatch(setUser(res.data.user));
-        navigate('/login');
-      }
-    });
+  const onLogoutClicked = async () => {
+    try {
+      await UserAPI.logout();
+      dispatch(setIsLogin(false));
+      dispatch(
+        setUser({
+          _id: '',
+          email: '',
+          birthday: '',
+          name: '',
+          profile: '',
+          role: 0,
+        })
+      );
+      dispatch(setFamilies([]));
+      dispatch(setFamilyRequests([]));
+      navigate('/login');
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요 ' + err);
+    }
   };
 
   const renderPostBoxes = postBoxes.map((postBox: PostBox) => {
@@ -153,13 +156,18 @@ export default function Profile() {
             </div>
           </div>
           <div className={styles.userButtons}>
-            <button className={styles.profileEditBtn}>계정 관리</button>
-            <button
-              className={styles.logoutBtn}
-              onClick={() => onLogoutClicked()}
-            >
-              로그아웃
-            </button>
+            {isMyProfile && (
+              <>
+                {' '}
+                <button className={styles.profileEditBtn}>계정 관리</button>
+                <button
+                  className={styles.logoutBtn}
+                  onClick={() => onLogoutClicked()}
+                >
+                  로그아웃
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

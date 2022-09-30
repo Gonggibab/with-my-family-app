@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
+import { RootState } from 'redux/store';
 import { MediaAPI } from 'api/MediaAPI';
 import { PostAPI } from 'api/PostAPI';
 import PostMenu from 'components/Post/PostMenu';
@@ -35,6 +37,7 @@ export type PostMenuProps = {
 export default function Post() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const user = useSelector((state: RootState) => state.user.user);
   const [postInfo, setPostInfo] = useState<PostInfo>({
     uploader: '',
     profile: '',
@@ -45,6 +48,7 @@ export default function Post() {
   const [media, setMedia] = useState<Media[]>([]);
   const [content, setContent] = useState<string>('');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isMyPost, setIsMyPost] = useState<boolean>(false);
 
   useEffect(() => {
     if (id) {
@@ -63,6 +67,10 @@ export default function Post() {
         updatedAt: post.updatedAt,
       });
 
+      if (user._id === post.userId._id) {
+        setIsMyPost(true);
+      }
+
       const mediaRes = await MediaAPI.getByPost(post._id);
       const mediaList = mediaRes.data.media;
       const tempMedia = [];
@@ -77,6 +85,8 @@ export default function Post() {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
   };
+
+  const onAddCommentClicked = () => {};
 
   const mediaComponent = (media: Media[], idx: number) => {
     if (media.length !== 0) {
@@ -101,9 +111,14 @@ export default function Post() {
     <div className={styles.container}>
       {isMenuOpen && <PostMenu postId={id!} setIsMenuOpen={setIsMenuOpen} />}
       <div className={styles.PostBox}>
-        <button className={styles.menuBtn} onClick={() => setIsMenuOpen(true)}>
-          <BsThreeDots size={20} />
-        </button>
+        {isMyPost && (
+          <button
+            className={styles.menuBtn}
+            onClick={() => setIsMenuOpen(true)}
+          >
+            <BsThreeDots size={20} />
+          </button>
+        )}
         <section className={styles.mediaBox}>
           <div className={styles.uploader}>
             {postInfo.profile ? (
@@ -138,8 +153,29 @@ export default function Post() {
                 <span>{calcDateDiff(postInfo.updatedAt)}</span>
               </div>
             </div>
-            <button className={styles.moreCommentBtn}>댓글 더보기</button>
+            <div className={styles.comment}>
+              <span>{postInfo.uploader}</span>
+              <div className={styles.content}>
+                <p>{postInfo.content}</p>
+                <span>{calcDateDiff(postInfo.updatedAt)}</span>
+              </div>
+            </div>
+            <div className={styles.comment}>
+              <span>{postInfo.uploader}</span>
+              <div className={styles.content}>
+                <p>{postInfo.content}</p>
+                <span>{calcDateDiff(postInfo.updatedAt)}</span>
+              </div>
+            </div>
+            <div className={styles.comment}>
+              <span>{postInfo.uploader}</span>
+              <div className={styles.content}>
+                <p>{postInfo.content}</p>
+                <span>{calcDateDiff(postInfo.updatedAt)}</span>
+              </div>
+            </div>
           </div>
+          <button className={styles.moreCommentBtn}>댓글 더보기</button>
           <div className={styles.buttons}>
             <button className={styles.ddabong}>
               <BsHandThumbsUpFill />
@@ -153,7 +189,7 @@ export default function Post() {
               placeholder="내용을 입력하세요"
               onChange={(e) => setContent(e.currentTarget.value)}
             />
-            <button>확인</button>
+            <button onClick={onAddCommentClicked}>확인</button>
           </div>
           <button className={styles.closeBtn} onClick={() => navigate(-1)}>
             뒤로

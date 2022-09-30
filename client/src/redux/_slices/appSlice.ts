@@ -1,16 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+type AppState = {
+  isDarkMode: boolean;
+  currentPage: string;
+  isLoading: boolean;
+};
+
+const initialState: AppState = {
+  isDarkMode: false,
+  currentPage: '',
+  isLoading: false,
+};
 
 const appSlice = createSlice({
   name: 'appSlice',
-  initialState: { isDarkMode: false, currentPage: '', isLoading: false },
+  initialState,
   reducers: {
-    updateIsDarkMode: (state, action) => {
+    updateIsDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;
     },
-    setCurrentPage: (state, action) => {
+    setCurrentPage: (state, action: PayloadAction<string>) => {
       state.currentPage = action.payload;
     },
-    setIsLoading: (state, action) => {
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
   },

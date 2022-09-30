@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 
-import { RootState } from 'redux/store';
 import { FamilyBoxProps } from 'views/family';
 import { FaUserCircle } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
@@ -12,15 +10,9 @@ import FamilyBoxMenu from './FamilyBoxMenu';
 export type FamilyBoxMenuProps = {
   relationId: string;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  fetchFamilyData: () => void;
 };
 
-export default function FamilyBox({
-  fetchFamilyRequest,
-  fetchFamilyData,
-  family,
-}: FamilyBoxProps) {
-  const curUser = useSelector((state: RootState) => state.user.user);
+export default function FamilyBox({ family }: FamilyBoxProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   return (
@@ -49,7 +41,6 @@ export default function FamilyBox({
         <FamilyBoxMenu
           relationId={family.relationId}
           setIsMenuOpen={setIsMenuOpen}
-          fetchFamilyData={fetchFamilyData}
         />
       )}
     </div>

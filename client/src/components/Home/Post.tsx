@@ -1,74 +1,70 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import {
-  BsHandThumbsUpFill,
-  BsHandThumbsUp,
-  BsFillChatFill,
-} from 'react-icons/bs';
 
 import { calcDateDiff } from 'utils/calcDateDiff';
-import { commentDataType, PostProps } from 'views/home';
+import { PostProps } from 'views/home';
+import { FaUserCircle } from 'react-icons/fa';
+import { BsHandThumbsUpFill, BsFillChatFill } from 'react-icons/bs';
 
 import styles from 'styles/components/Home/Post.module.scss';
-import profile from 'assets/images/testProfileMe.jpg';
-import media from 'assets/images/testImg1.jpg';
+import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
-export default function Post({
-  name,
-  relationship,
-  profileURL,
-  imgURL,
-  isDdabong,
-  content,
-  updatedAt,
-  comments,
-}: PostProps) {
+export default function Post({ post }: PostProps) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [index, setIndex] = useState<number>(0);
 
   const onDdabongClicked = () => {};
-  const dateDiff = calcDateDiff(updatedAt);
+  const dateDiff = calcDateDiff(post.updatedAt);
 
-  const singleCommentComponent = () => {
-    const { commentId, name, relationship, comment, updatedAt } = comments[0];
-    const dateDiff = calcDateDiff(updatedAt);
+  const mediaComponent = (idx: number) => {
+    if (post.media.length !== 0) {
+      const file = post.media[idx];
 
-    return (
-      <div key={commentId} className={styles.comment}>
-        <span className={styles.commenter}>
-          {relationship ? relationship : name}
-        </span>
-        <p>{comment}</p>
-        <span className={styles.commentDate}>{dateDiff}</span>
-      </div>
-    );
+      if (file.type.includes('image/')) {
+        return <img src={`http://localhost:5000/${file.url}`} alt="이미지" />;
+      } else {
+        return (
+          <video
+            controls
+            autoPlay
+            muted
+            src={`http://localhost:5000/${file.url}`}
+          />
+        );
+      }
+    }
   };
-
-  const commentComponents = comments.map((data: commentDataType) => {
-    const { commentId, name, relationship, comment, updatedAt } = data;
-    const dateDiff = calcDateDiff(updatedAt);
-
-    return (
-      <div key={commentId} className={styles.comment}>
-        <span>{relationship ? relationship : name}</span>
-        <p>{comment}</p>
-        <span>{dateDiff}</span>
-      </div>
-    );
-  });
 
   return (
     <article className={styles.post}>
       <div className={styles.uploader}>
-        <img className={styles.profile} src={profile} alt="img" />
-        <span>{relationship ? relationship : name}</span>
+        {post.profile ? (
+          <img src={post.profile} alt="사용자 프로필" />
+        ) : (
+          <FaUserCircle />
+        )}
+        <span>{post.relationship || post.name}</span>
       </div>
-      <img className={styles.media} src={media} alt="img" />
+      <section className={styles.media}>
+        {mediaComponent(index)}
+        {index > 0 && (
+          <RiArrowLeftSLine
+            className={styles.leftArrow}
+            onClick={() => setIndex(index - 1)}
+          />
+        )}
+        {index < post.media.length - 1 && (
+          <RiArrowRightSLine
+            className={styles.rightArrow}
+            onClick={() => setIndex(index + 1)}
+          />
+        )}
+      </section>
       <div className={styles.buttons}>
         <button className={styles.ddabong} onClick={() => onDdabongClicked()}>
-          {isDdabong ? (
-            <BsHandThumbsUpFill color="#3069f5" />
-          ) : (
-            <BsHandThumbsUp />
-          )}
+          <BsHandThumbsUpFill />
         </button>
         <button className={styles.chat}>
           <BsFillChatFill />
@@ -76,16 +72,17 @@ export default function Post({
       </div>
       <div className={styles.content}>
         <span className={styles.contentUploader}>
-          {relationship ? relationship : name}
+          {post.relationship || post.name}
         </span>
-        <p>{content}</p>
+        <p>{post.content}</p>
         <span className={styles.contentDate}>{dateDiff}</span>
       </div>
-      <div className={styles.comments}>
-        {singleCommentComponent()}
-        <button>댓글 더 보기</button>
-      </div>
-      <div className={styles.input}></div>
+      <button
+        className={styles.moreCommentsBtn}
+        onClick={() => navigate(`/post/${post.postId}`)}
+      >
+        댓글 보기
+      </button>
     </article>
   );
 }

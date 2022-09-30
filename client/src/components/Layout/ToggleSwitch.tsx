@@ -12,6 +12,7 @@ export default function ToggleSwitch() {
   const onToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const theme = e.target.checked ? 'dark' : 'light';
     dispatch(updateIsDarkMode(theme === 'dark'));
+    localStorage.setItem('color-theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
   };
 

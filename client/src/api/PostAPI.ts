@@ -18,4 +18,7 @@ export const PostAPI = {
   delete: (postId: string) => {
     return HttpRequest.post('/api/posts/deletePost', { postId });
   },
+  getRecentPost: (userIdList: string[]) => {
+    return HttpRequest.post('/api/posts/getRecentPost', { userIdList });
+  },
 };
