@@ -44,7 +44,15 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
             삭제
           </li>
           <hr />
-          <li className={styles.cancel} onClick={() => setIsMenuOpen(false)}>
+          <li>게시물 수정</li>
+          <hr />
+          <li onClick={() => navigate(-1)}>게시물 닫기</li>
+          <hr />
+          <li
+            onClick={() => {
+              setIsMenuOpen(false);
+            }}
+          >
             취소
           </li>
         </ul>

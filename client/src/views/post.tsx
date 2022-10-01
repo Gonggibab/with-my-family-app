@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
+import { setIsLoading } from 'redux/_slices/appSlice';
 import { MediaAPI } from 'api/MediaAPI';
 import { PostAPI } from 'api/PostAPI';
 import PostMenu from 'components/Post/PostMenu';
@@ -16,6 +17,8 @@ import {
 } from 'react-icons/bs';
 
 import styles from 'styles/views/Post.module.scss';
+import { CommentAPI } from 'api/CommentAPI';
+import Comment from 'components/Post/Comment';
 
 type PostInfo = {
   uploader: string;
@@ -24,9 +27,17 @@ type PostInfo = {
   updatedAt: string;
 };
 
-type Media = {
+type MediaData = {
   url: string;
   type: string;
+};
+
+type CommentData = {
+  commentId: string;
+  userId: string;
+  uploader: string;
+  content: string;
+  updatedAt: string;
 };
 
 export type PostMenuProps = {
@@ -34,18 +45,21 @@ export type PostMenuProps = {
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+export type CommentProps = {
+  comment: CommentData;
+  updateCommentData: () => void;
+};
+
 export default function Post() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
-  const [postInfo, setPostInfo] = useState<PostInfo>({
-    uploader: '',
-    profile: '',
-    content: '',
-    updatedAt: '',
-  });
+  const [postInfo, setPostInfo] = useState<PostInfo>();
   const [index, setIndex] = useState<number>(0);
-  const [media, setMedia] = useState<Media[]>([]);
+  const [media, setMedia] = useState<MediaData[]>([]);
+  const [comments, setComments] = useState<CommentData[]>([]);
   const [content, setContent] = useState<string>('');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMyPost, setIsMyPost] = useState<boolean>(false);
@@ -58,6 +72,7 @@ export default function Post() {
 
   const getPostData = async (id: string) => {
     try {
+      dispatch(setIsLoading(true));
       const postRes = await PostAPI.getPost(id);
       const post = postRes.data.post;
       setPostInfo({
@@ -72,23 +87,67 @@ export default function Post() {
       }
 
       const mediaRes = await MediaAPI.getByPost(post._id);
-      const mediaList = mediaRes.data.media;
       const tempMedia = [];
-      for (const media of mediaList) {
+      for (const media of mediaRes.data.media) {
         tempMedia.push({
           url: media.filePath,
           type: media.mimeType,
         });
       }
       setMedia(tempMedia);
+
+      updateCommentData();
+
+      dispatch(setIsLoading(false));
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
   };
 
-  const onAddCommentClicked = () => {};
+  const updateCommentData = async () => {
+    try {
+      const commentRes = await CommentAPI.getCommentsByPost(id!);
+      const commentList = [];
+      for (const comment of commentRes.data.comment) {
+        commentList.push({
+          commentId: comment._id,
+          userId: comment.userId._id,
+          uploader: comment.userId.name,
+          content: comment.content,
+          updatedAt: comment.updatedAt,
+        });
+      }
+      setComments(commentList);
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
 
-  const mediaComponent = (media: Media[], idx: number) => {
+  const onChatClicked = () => {
+    textareaRef.current?.focus();
+  };
+
+  const onAddCommentClicked = async () => {
+    if (content === '') return;
+    try {
+      await CommentAPI.addComment({
+        postId: id!,
+        userId: user._id,
+        content: content,
+      });
+
+      if (textareaRef.current) {
+        textareaRef.current.value = '';
+        textareaRef.current.blur();
+      }
+
+      updateCommentData();
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
+
+  const renderMedia = (media: MediaData[], idx: number) => {
     if (media.length !== 0) {
       const file = media[idx];
 
@@ -107,6 +166,16 @@ export default function Post() {
     }
   };
 
+  const renderComments = comments.map((comment) => {
+    return (
+      <Comment
+        key={comment.commentId}
+        comment={comment}
+        updateCommentData={updateCommentData}
+      />
+    );
+  });
+
   return (
     <div className={styles.container}>
       {isMenuOpen && <PostMenu postId={id!} setIsMenuOpen={setIsMenuOpen} />}
@@ -121,15 +190,15 @@ export default function Post() {
         )}
         <section className={styles.mediaBox}>
           <div className={styles.uploader}>
-            {postInfo.profile ? (
-              <img src={postInfo.profile} alt="사용자 프로필" />
+            {postInfo?.profile ? (
+              <img src={postInfo?.profile} alt="사용자 프로필" />
             ) : (
               <FaUserCircle />
             )}
-            <span>{postInfo.uploader}</span>
+            <span>{postInfo?.uploader}</span>
           </div>
           <div className={styles.media}>
-            {mediaComponent(media, index)}
+            {renderMedia(media, index)}
             {index > 0 && (
               <RiArrowLeftSLine
                 className={styles.leftArrow}
@@ -146,48 +215,32 @@ export default function Post() {
         </section>
         <section className={styles.Comments}>
           <div className={styles.commentBox}>
-            <div className={styles.comment}>
-              <span>{postInfo.uploader}</span>
+            <div className={styles.Comment}>
+              <span className={styles.uploader}>{postInfo?.uploader}</span>
               <div className={styles.content}>
-                <p>{postInfo.content}</p>
-                <span>{calcDateDiff(postInfo.updatedAt)}</span>
+                <p>
+                  {postInfo?.content}{' '}
+                  <span>{calcDateDiff(postInfo?.updatedAt)}</span>
+                </p>
               </div>
             </div>
-            <div className={styles.comment}>
-              <span>{postInfo.uploader}</span>
-              <div className={styles.content}>
-                <p>{postInfo.content}</p>
-                <span>{calcDateDiff(postInfo.updatedAt)}</span>
-              </div>
-            </div>
-            <div className={styles.comment}>
-              <span>{postInfo.uploader}</span>
-              <div className={styles.content}>
-                <p>{postInfo.content}</p>
-                <span>{calcDateDiff(postInfo.updatedAt)}</span>
-              </div>
-            </div>
-            <div className={styles.comment}>
-              <span>{postInfo.uploader}</span>
-              <div className={styles.content}>
-                <p>{postInfo.content}</p>
-                <span>{calcDateDiff(postInfo.updatedAt)}</span>
-              </div>
-            </div>
+            {renderComments}
           </div>
-          <button className={styles.moreCommentBtn}>댓글 더보기</button>
           <div className={styles.buttons}>
             <button className={styles.ddabong}>
               <BsHandThumbsUpFill />
             </button>
-            <button className={styles.chat}>
+            <button className={styles.chat} onClick={onChatClicked}>
               <BsFillChatFill />
             </button>
           </div>
           <div className={styles.commentInput}>
             <textarea
+              ref={textareaRef}
               placeholder="내용을 입력하세요"
-              onChange={(e) => setContent(e.currentTarget.value)}
+              onChange={(e) => {
+                setContent(e.currentTarget.value);
+              }}
             />
             <button onClick={onAddCommentClicked}>확인</button>
           </div>

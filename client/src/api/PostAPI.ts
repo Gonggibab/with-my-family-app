@@ -15,6 +15,9 @@ export const PostAPI = {
   getByUser: (userId: string) => {
     return HttpRequest.post('/api/posts/findByUser', { userId });
   },
+  countUserPost: (userId: string) => {
+    return HttpRequest.post('/api/posts/countUserPost', { userId });
+  },
   delete: (postId: string) => {
     return HttpRequest.post('/api/posts/deletePost', { postId });
   },

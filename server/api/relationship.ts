@@ -66,6 +66,20 @@ const findRelationship = (req: Request, res: Response) => {
     });
 };
 
+// Find and Count Relationship
+const countRelationship = (req: Request, res: Response) => {
+  RelationshipModel.find({ userId: req.body.userId }).count(function (
+    err,
+    count
+  ) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({ count });
+  });
+};
+
 // Delete Relationship
 const deleteRelationship = (req: Request, res: Response) => {
   RelationshipModel.deleteOne(
@@ -83,4 +97,9 @@ const deleteRelationship = (req: Request, res: Response) => {
   );
 };
 
-export { addRelationship, findRelationship, deleteRelationship };
+export {
+  addRelationship,
+  findRelationship,
+  countRelationship,
+  deleteRelationship,
+};

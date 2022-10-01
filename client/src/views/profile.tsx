@@ -17,6 +17,7 @@ import PostBox from 'components/Profile/PostBox';
 
 import styles from 'styles/views/Profile.module.scss';
 import { FaUserCircle } from 'react-icons/fa';
+import { RelationshipAPI } from 'api/RelationshipAPI';
 
 type PostData = {
   _id: string;
@@ -25,12 +26,7 @@ type PostData = {
   updatedAt?: Date;
 };
 
-type PostBox = {
-  postId: string;
-  filePath: string;
-};
-
-export type PostBoxProps = {
+type PostBoxData = {
   postId: string;
   filePath: string;
 };
@@ -42,6 +38,13 @@ type UserData = {
   name: string;
   profile?: string;
   role?: number;
+  postCount?: number;
+  relationCount?: number;
+};
+
+export type PostBoxProps = {
+  postId: string;
+  filePath: string;
 };
 
 export default function Profile() {
@@ -49,35 +52,45 @@ export default function Profile() {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = useSelector((state: RootState) => state.user.user);
-  const [userData, setUserData] = useState<UserData>(user);
-  const [postBoxes, setPostBoxes] = useState<PostBox[]>([]);
+  const [userData, setUserData] = useState<UserData>();
+  const [postBoxes, setPostBoxes] = useState<PostBoxData[]>([]);
   const [isMyProfile, setIsMyProfile] = useState<boolean>(false);
 
   useEffect(() => {
-    if (user._id === id) {
-      setUserData(user);
-      setIsMyProfile(true);
-    } else {
-      if (id) getUserData(id);
+    if (id) {
+      getUserData(id);
     }
-
-    if (userData._id) {
-      getUserPosts(userData._id);
-    }
-  }, []);
+  }, [user]);
 
   const getUserData = async (userId: string) => {
     try {
-      const userRes = await UserAPI.getUser(userId);
-      const user = userRes.data.user;
-      setUserData(user);
+      dispatch(setIsLoading(true));
+      let userData: UserData;
+      if (user._id === userId) {
+        userData = user;
+        setIsMyProfile(true);
+      } else {
+        const userRes = await UserAPI.getUser(userId);
+        userData = userRes.data.user;
+      }
+
+      const postRes = await PostAPI.countUserPost(userData._id);
+      const relationRes = await RelationshipAPI.countRelationship(userData._id);
+
+      setUserData({
+        ...userData,
+        postCount: postRes.data.count,
+        relationCount: relationRes.data.count,
+      });
+
+      getUserPosts(userData._id);
+      dispatch(setIsLoading(false));
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
   };
 
   const getUserPosts = async (userId: string) => {
-    dispatch(setIsLoading(true));
     try {
       const postRes = await PostAPI.getByUser(userId);
       const posts: PostData[] = postRes.data.posts;
@@ -97,7 +110,6 @@ export default function Profile() {
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
-    dispatch(setIsLoading(false));
   };
 
   const onLogoutClicked = async () => {
@@ -122,7 +134,7 @@ export default function Profile() {
     }
   };
 
-  const renderPostBoxes = postBoxes.map((postBox: PostBox) => {
+  const renderPostBoxes = postBoxes.map((postBox: PostBoxData) => {
     return (
       <PostBox
         key={postBox.postId}
@@ -136,7 +148,7 @@ export default function Profile() {
     <div className={styles.container}>
       <div className={styles.userProfile}>
         <div className={styles.userImage}>
-          {userData.profile ? (
+          {userData?.profile ? (
             <img src={userData.profile} alt="사용자 프로필 사진" />
           ) : (
             <FaUserCircle />
@@ -144,15 +156,15 @@ export default function Profile() {
         </div>
 
         <div className={styles.userInfo}>
-          <h3>{userData.name}</h3>
+          <h3>{userData?.name}</h3>
           <div className={styles.userNumbers}>
             <div className={styles.userPostNum}>
               <h4>게시물</h4>
-              <span>2</span>
+              <span>{userData?.postCount}</span>
             </div>
             <div className={styles.userFamilyNum}>
               <h4>가족</h4>
-              <span>4</span>
+              <span>{userData?.relationCount}</span>
             </div>
           </div>
           <div className={styles.userButtons}>

@@ -66,7 +66,10 @@ export default function Post({ post }: PostProps) {
         <button className={styles.ddabong} onClick={() => onDdabongClicked()}>
           <BsHandThumbsUpFill />
         </button>
-        <button className={styles.chat}>
+        <button
+          className={styles.chat}
+          onClick={() => navigate(`/post/${post.postId}`)}
+        >
           <BsFillChatFill />
         </button>
       </div>
@@ -81,7 +84,7 @@ export default function Post({ post }: PostProps) {
         className={styles.moreCommentsBtn}
         onClick={() => navigate(`/post/${post.postId}`)}
       >
-        댓글 보기
+        게시물 보기
       </button>
     </article>
   );

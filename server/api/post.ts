@@ -33,8 +33,7 @@ const findPost = async (req: Request, res: Response) => {
 
 // Find Post by User
 const findByUser = (req: Request, res: Response) => {
-  const userId = new mongoose.Types.ObjectId(req.body.userId);
-  PostModel.find({ userId: userId })
+  PostModel.find({ userId: req.body.userId })
     .sort({ createdAt: -1 })
     .limit(18)
     .exec(function (err, posts) {
@@ -44,6 +43,17 @@ const findByUser = (req: Request, res: Response) => {
       }
       return res.status(200).json({ posts });
     });
+};
+
+// Find and Count Post of an User
+const countUserPost = (req: Request, res: Response) => {
+  PostModel.find({ userId: req.body.userId }).count(function (err, count) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({ count });
+  });
 };
 
 // Delete Post
@@ -75,4 +85,11 @@ const getRecentPost = (req: Request, res: Response) => {
     });
 };
 
-export { upload, findPost, findByUser, deletePost, getRecentPost };
+export {
+  upload,
+  findPost,
+  findByUser,
+  countUserPost,
+  deletePost,
+  getRecentPost,
+};

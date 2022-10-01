@@ -12,6 +12,9 @@ export const RelationshipAPI = {
   getRelationship: (userId: string) => {
     return HttpRequest.post('/api/relationShip/getRelationship', { userId });
   },
+  countRelationship: (userId: string) => {
+    return HttpRequest.post('/api/relationShip/countRelationship', { userId });
+  },
   deleteRelationship: (relationId: string) => {
     return HttpRequest.post('/api/relationShip/deleteRelationship', {
       relationId,
