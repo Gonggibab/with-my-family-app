@@ -37,58 +37,57 @@
         top: 1rem;
         left: 1rem;
         width: calc(100% - 2rem) ;
-      }
 
-      button, .imgAddBtn {        
-        margin-right: 1rem;
-        padding: .5rem 1rem;
-        border-radius: .5rem;
-        font-size: .8rem;
-        font-weight: bold;
-        color: colors.$white;
-        background-color: rgba(0, 0, 0, 0.4);
-        transition: all .2s ease-in;
-      }
-
-      .imgEditBtn, .closeEditBtn  {
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.6);
+        button, .imgAddBtn {        
+          margin-right: 1rem;
+          padding: .5rem 1rem;
+          border-radius: .5rem;
+          font-size: .8rem;
+          font-weight: bold;
+          color: colors.$white;
+          background-color: rgba(0, 0, 0, 0.4);
+          transition: all .2s ease-in;
+          cursor: pointer;
         }
-      }
-
-      .fileInput {
-        .imgAddBtn {   
-          display: block;
-          -webkit-user-select:none;
-          -moz-user-select:none;
-          -ms-user-select:none;
-          user-select:none;  
-
+  
+        .imgEditBtn, .closeEditBtn  {
           &:hover {
-            background-color: colors.$blue;
-          }   
+            background-color: rgba(0, 0, 0, 0.8);
+          }
         }
-
-        input[type="file"] {
-          position: absolute;
-          width: 0;
-          height: 0;
-          padding: 0;
-          overflow: hidden;
-          border: 0;
-        }      
-      }
-      
-
-      .imgDeleteBtn {
-        margin-left: auto;
-        margin-right: 0;
-
-        &:hover {
-          background-color: colors.$red;
-          opacity: .8;
+  
+        .fileInput {
+          .imgAddBtn {   
+            display: block;
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            user-select:none;  
+  
+            &:hover {
+              background-color: rgba(48, 105, 245, 0.8);
+            }   
+          }
+  
+          input[type="file"] {
+            position: absolute;
+            width: 0;
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+          }      
+        }       
+  
+        .imgDeleteBtn {
+          margin-left: auto;
+          margin-right: 0;
+  
+          &:hover {
+            background-color: rgba(204, 19, 19, 0.8);
+          }
         }
-      }
+      }      
       
       svg {
         z-index: 1;

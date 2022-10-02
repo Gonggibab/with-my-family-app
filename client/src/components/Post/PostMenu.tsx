@@ -7,7 +7,11 @@ import { PostMenuProps } from 'views/post';
 
 import styles from 'styles/components/Post/PostMenu.module.scss';
 
-export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
+export default function PostMenu({
+  postId,
+  setIsMenuOpen,
+  setIsEditOpen,
+}: PostMenuProps) {
   const navigate = useNavigate();
   const [isConfirm, setIsConfirm] = useState<boolean>(false);
 
@@ -15,18 +19,20 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
     setIsMenuOpen(false);
   };
 
-  const onDeleteClicked = (e: MouseEvent<HTMLLIElement>) => {
-    e.stopPropagation();
+  const onDeleteClicked = () => {
     setIsConfirm(true);
   };
 
-  const onCancelClicked = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const onEditClicked = () => {
+    setIsMenuOpen(false);
+    setIsEditOpen(true);
+  };
+
+  const onCancelClicked = async () => {
     setIsConfirm(false);
   };
 
-  const onConfirmClicked = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const onConfirmClicked = async () => {
     try {
       await PostAPI.delete(postId);
       await MediaAPI.deleteByPost(postId);
@@ -39,12 +45,12 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
   return (
     <div className={styles.container} onClick={onBgClicked}>
       {!isConfirm ? (
-        <ul className={styles.PostMenu}>
-          <li className={styles.delete} onClick={(e) => onDeleteClicked(e)}>
+        <ul className={styles.PostMenu} onClick={(e) => e.stopPropagation()}>
+          <li className={styles.delete} onClick={onDeleteClicked}>
             삭제
           </li>
           <hr />
-          <li>게시물 수정</li>
+          <li onClick={onEditClicked}>게시물 수정</li>
           <hr />
           <li onClick={() => navigate(-1)}>게시물 닫기</li>
           <hr />
@@ -57,19 +63,13 @@ export default function PostMenu({ postId, setIsMenuOpen }: PostMenuProps) {
           </li>
         </ul>
       ) : (
-        <div className={styles.confirmMsg}>
+        <div className={styles.confirmMsg} onClick={(e) => e.stopPropagation()}>
           <span>정말로 삭제하시겠습니까?</span>
           <div className={styles.buttons}>
-            <button
-              className={styles.confirmBtn}
-              onClick={(e) => onConfirmClicked(e)}
-            >
+            <button className={styles.confirmBtn} onClick={onConfirmClicked}>
               확인
             </button>
-            <button
-              className={styles.cancelBtn}
-              onClick={(e) => onCancelClicked(e)}
-            >
+            <button className={styles.cancelBtn} onClick={onCancelClicked}>
               취소
             </button>
           </div>

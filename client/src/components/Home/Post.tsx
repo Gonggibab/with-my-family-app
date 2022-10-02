@@ -4,18 +4,17 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { DdabongAPI } from 'api/DdabongAPI';
+import MediaViewer from 'components/MediaViewer';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { PostProps } from 'views/home';
 import { FaUserCircle } from 'react-icons/fa';
 import { BsHandThumbsUpFill, BsFillChatFill } from 'react-icons/bs';
-import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
 import styles from 'styles/components/Home/Post.module.scss';
 
 export default function Post({ post, posts, setPosts }: PostProps) {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
-  const [index, setIndex] = useState<number>(0);
   const [isDdabong, setIsDdabong] = useState<boolean>(false);
   const [ddabongId, setDdabongId] = useState<string>('');
 
@@ -79,25 +78,6 @@ export default function Post({ post, posts, setPosts }: PostProps) {
     setIsDdabong(false);
   };
 
-  const mediaComponent = (idx: number) => {
-    if (post.media.length !== 0) {
-      const file = post.media[idx];
-
-      if (file.type.includes('image/')) {
-        return <img src={`http://localhost:5000/${file.url}`} alt="이미지" />;
-      } else {
-        return (
-          <video
-            controls
-            autoPlay
-            muted
-            src={`http://localhost:5000/${file.url}`}
-          />
-        );
-      }
-    }
-  };
-
   return (
     <article className={styles.post}>
       <div className={styles.uploader}>
@@ -109,19 +89,7 @@ export default function Post({ post, posts, setPosts }: PostProps) {
         <span>{post.relationship || post.name}</span>
       </div>
       <section className={styles.media}>
-        {mediaComponent(index)}
-        {index > 0 && (
-          <RiArrowLeftSLine
-            className={styles.leftArrow}
-            onClick={() => setIndex(index - 1)}
-          />
-        )}
-        {index < post.media.length - 1 && (
-          <RiArrowRightSLine
-            className={styles.rightArrow}
-            onClick={() => setIndex(index + 1)}
-          />
-        )}
+        <MediaViewer media={post.media} />
       </section>
       {post.ddabongList.length !== 0 && (
         <section className={styles.ddabongCount}>

@@ -73,7 +73,10 @@ export default function Home() {
         const mediaList = [];
         const mediaRes = await MediaAPI.getByPost(post._id);
         for (const media of mediaRes.data.media) {
-          mediaList.push({ url: media.filePath, type: media.mimeType });
+          mediaList.push({
+            url: `http://localhost:5000/${media.filePath}`,
+            type: media.mimeType,
+          });
         }
 
         const ddabongList = [];

@@ -74,4 +74,32 @@ const deleteMedia = (req: Request, res: Response) => {
   );
 };
 
-export { uploadServer, uploadDB, findByPost, deleteMedia };
+// Delete media by urls
+const deleteMediabyURL = (req: Request, res: Response) => {
+  MediaModel.deleteMany(
+    { filePath: req.body.urls },
+    (err: Error, media: IMedia[]) => {
+      if (err) {
+        return res.status(400).json({
+          err,
+        });
+      }
+
+      for (const url of req.body.urls) {
+        fs.unlink(url, (err) => {
+          if (err) {
+            return res.status(400).json({
+              err,
+            });
+          }
+        });
+      }
+
+      return res.status(200).json({
+        media,
+      });
+    }
+  );
+};
+
+export { uploadServer, uploadDB, findByPost, deleteMedia, deleteMediabyURL };

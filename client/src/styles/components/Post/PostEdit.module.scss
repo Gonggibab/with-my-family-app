@@ -1,0 +1,226 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.container {
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top:0;
+  left:0;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  background-color: rgba(0,0,0,0.8);
+
+  .editPostBox { 
+    z-index: 600;    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;  
+    padding: 1rem;
+    width: 40vw;
+    height: calc(40vw + 200px);
+    min-width: 500px;
+    max-width: 600px;
+    min-height: calc(700px);
+    max-height: calc(800px);
+    border-radius: .8rem;
+    background: var(--component-color);
+    box-shadow: var(--post-shadow-color) 0px 50px 100px -20px;
+  
+    @include mixins.device(mobile) {
+      width: 90vw;
+      height: calc(90vw + 250px);
+      min-width: calc(0.9 * variables.$minimum-device-width);
+      min-height: calc(0.9 * variables.$minimum-device-width + 250px);
+    }
+
+    .editSection {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 70%;    
+    
+      .imageInspectZone {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    
+        img, video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 50%;
+          border-radius: .5rem;
+        }      
+        
+        svg {
+          z-index: 1;
+          position: absolute;      
+          top: 50%;      
+          width: 2rem;
+          height: 2rem;
+          border-radius: 2rem;
+          color: colors.$white;
+          background-color: rgba(0, 0, 0, 0.4);
+          transition: all .2s ease-in;
+    
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+            transform: scale(1.1);
+          }
+        }
+    
+        .leftArrow {
+          left: 1rem;
+        }
+    
+        .rightArrow {
+          right: 1rem;
+        }
+      }
+
+      .imgEditBar {
+        display: flex;
+        z-index: 1;
+        position: absolute;     
+        top: 1rem;
+        left: 1rem;
+        width: calc(100% - 2rem) ;
+
+        button, .imgAddBtn {        
+          margin-right: 1rem;
+          padding: .5rem 1rem;
+          border-radius: .5rem;
+          font-size: .8rem;
+          font-weight: bold;
+          color: colors.$white;
+          background-color: rgba(0, 0, 0, 0.4);
+          transition: all .2s ease-in;
+          cursor: pointer;
+        }
+  
+        .imgEditBtn, .closeEditBtn  {
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+          }
+        }
+  
+        .fileInput {
+          .imgAddBtn {   
+            display: block;
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            user-select:none;  
+  
+            &:hover {
+              background-color: rgba(48, 105, 245, 0.8);
+            }   
+          }
+  
+          input[type="file"] {
+            position: absolute;
+            width: 0;
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+          }
+        }
+      }      
+
+      .imgDeleteBtn {
+        margin-left: auto;
+        margin-right: 0;
+
+        &:hover {
+          background-color: rgba(204, 19, 19, 0.8);
+        }
+      }
+    }
+  
+    .contentZone {
+      width: 100%;
+      height: 20%;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: .5rem;
+      background-color: var(--bg-color);
+  
+      .uploaderInfo {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 1.5rem;
+        font-size: .8rem;
+        font-weight: bold;
+  
+        img, svg {
+          margin-right: .8rem;
+          width: 1.8rem;
+          height: 1.8rem;
+          object-fit: cover;
+          object-position: 50% 50%;
+          border-radius: 1.8rem;
+        }
+      }
+  
+      textarea {
+        margin-top: 1rem;
+        width: 100%;
+        height: 60%;
+        font-size: .8rem;
+        color: inherit;
+        background-color: transparent;
+  
+        &:focus::placeholder {         
+          color: transparent;
+        }
+    
+        &::placeholder{
+          color: inherit;
+          font-size: .8rem;
+          opacity: .6;  
+        }
+      }
+    }
+    
+    .buttons {
+      flex-grow: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding: 0 1rem;
+      width: 100%;
+  
+      .backBtn {
+        font-size: .8rem;
+        color: var(--color);
+        font-weight: bold;
+        text-decoration: underline;
+      }
+  
+      .nextBtn {            
+        padding: .4rem 1rem;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: .5rem;
+        color: colors.$white;
+        background-color: colors.$blue;
+        transition: all .2s ease-out;
+  
+        &:hover {
+          color: colors.$blue;
+          background-color: colors.$white;
+        }
+      }
+    }
+  }
+}

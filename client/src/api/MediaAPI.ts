@@ -38,4 +38,12 @@ export const MediaAPI = {
   deleteByPost: (postId: string) => {
     return HttpRequest.post('/api/media/deleteMedia', { postId });
   },
+  deleteMediabyURL: (filepaths: string[]) => {
+    const urls = [];
+    for (const filepath of filepaths) {
+      urls.push('uploads' + filepath.split('uploads')[1]);
+    }
+
+    return HttpRequest.post('/api/media/deleteMediabyURL', { urls });
+  },
 };

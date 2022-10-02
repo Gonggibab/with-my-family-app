@@ -1,11 +1,11 @@
-export const calcDateDiff = (updatedAt?: string) => {
-  if (!updatedAt) return;
+export const calcDateDiff = (createdAt?: string) => {
+  if (!createdAt) return;
 
-  const updated = new Date(updatedAt);
+  const created = new Date(createdAt);
   const now = new Date();
 
   // calculate time difference in millisecond
-  const diff = now.getTime() - updated.getTime();
+  const diff = now.getTime() - created.getTime();
 
   // millisecond to minute
   const min = Math.floor(diff / (1000 * 60));

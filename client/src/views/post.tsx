@@ -6,9 +6,13 @@ import { RootState } from 'redux/store';
 import { setIsLoading } from 'redux/_slices/appSlice';
 import { MediaAPI } from 'api/MediaAPI';
 import { PostAPI } from 'api/PostAPI';
+import { CommentAPI } from 'api/CommentAPI';
+import { DdabongAPI } from 'api/DdabongAPI';
+import MediaViewer from 'components/MediaViewer';
 import PostMenu from 'components/Post/PostMenu';
+import Comment from 'components/Post/Comment';
+import PostEdit from 'components/Post/PostEdit';
 import { calcDateDiff } from 'utils/calcDateDiff';
-import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 import { FaUserCircle } from 'react-icons/fa';
 import {
   BsFillChatFill,
@@ -17,9 +21,6 @@ import {
 } from 'react-icons/bs';
 
 import styles from 'styles/views/Post.module.scss';
-import { CommentAPI } from 'api/CommentAPI';
-import Comment from 'components/Post/Comment';
-import { DdabongAPI } from 'api/DdabongAPI';
 
 type PostInfo = {
   uploader: string;
@@ -47,14 +48,24 @@ type CommentData = {
   updatedAt: string;
 };
 
-export type PostMenuProps = {
-  postId: string;
-  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 export type CommentProps = {
   comment: CommentData;
   updateCommentData: () => void;
+};
+
+export type PostMenuProps = {
+  postId: string;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type PostEditProps = {
+  media: MediaData[];
+  postId: string;
+  postContent: string;
+  setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setViewerIndex: (cb: any) => void;
 };
 
 export default function Post() {
@@ -64,21 +75,21 @@ export default function Post() {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
   const [postInfo, setPostInfo] = useState<PostInfo>();
-  const [index, setIndex] = useState<number>(0);
   const [media, setMedia] = useState<MediaData[]>([]);
   const [ddabongs, setDdabongs] = useState<DdabongData[]>([]);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [content, setContent] = useState<string>('');
   const [isDdabong, setIsDdabong] = useState<boolean>(false);
   const [ddabongId, setDdabongId] = useState<string>('');
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMyPost, setIsMyPost] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (id) {
       getPostData(id);
     }
-  }, [user]);
+  }, [user, isEditOpen]);
 
   useEffect(() => {
     checkIsDdabong();
@@ -104,7 +115,7 @@ export default function Post() {
       const tempMedia = [];
       for (const media of mediaRes.data.media) {
         tempMedia.push({
-          url: media.filePath,
+          url: `http://localhost:5000/${media.filePath}`,
           type: media.mimeType,
         });
       }
@@ -156,6 +167,10 @@ export default function Post() {
       }
     }
     setIsDdabong(false);
+  };
+
+  const setViewerIndex = (cb: React.Dispatch<React.SetStateAction<number>>) => {
+    cb(0);
   };
 
   const onDdabongClicked = async () => {
@@ -212,25 +227,6 @@ export default function Post() {
     }
   };
 
-  const renderMedia = (media: MediaData[], idx: number) => {
-    if (media.length !== 0) {
-      const file = media[idx];
-
-      if (file.type.includes('image/')) {
-        return <img src={`http://localhost:5000/${file.url}`} alt="이미지" />;
-      } else {
-        return (
-          <video
-            controls
-            autoPlay
-            muted
-            src={`http://localhost:5000/${file.url}`}
-          />
-        );
-      }
-    }
-  };
-
   const renderComments = comments.map((comment) => {
     return (
       <Comment
@@ -243,7 +239,23 @@ export default function Post() {
 
   return (
     <div className={styles.container}>
-      {isMenuOpen && <PostMenu postId={id!} setIsMenuOpen={setIsMenuOpen} />}
+      {isMenuOpen && (
+        <PostMenu
+          postId={id!}
+          setIsMenuOpen={setIsMenuOpen}
+          setIsEditOpen={setIsEditOpen}
+        />
+      )}
+      {isEditOpen && (
+        <PostEdit
+          media={media}
+          postId={id!}
+          postContent={postInfo?.content!}
+          setIsEditOpen={setIsEditOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          setViewerIndex={setViewerIndex}
+        />
+      )}
       <div className={styles.PostBox}>
         {isMyPost && (
           <button
@@ -263,19 +275,7 @@ export default function Post() {
             <span>{postInfo?.uploader}</span>
           </div>
           <section className={styles.media}>
-            {renderMedia(media, index)}
-            {index > 0 && (
-              <RiArrowLeftSLine
-                className={styles.leftArrow}
-                onClick={() => setIndex(index - 1)}
-              />
-            )}
-            {index < media.length - 1 && (
-              <RiArrowRightSLine
-                className={styles.rightArrow}
-                onClick={() => setIndex(index + 1)}
-              />
-            )}
+            <MediaViewer media={media} setViewerIndex={setViewerIndex} />
           </section>
         </section>
         <section className={styles.Comments}>

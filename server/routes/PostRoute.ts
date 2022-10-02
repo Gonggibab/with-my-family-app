@@ -6,6 +6,7 @@ import {
   countUserPost,
   deletePost,
   getRecentPost,
+  updatePost,
 } from '../api/post';
 
 const router: Router = express.Router();
@@ -16,5 +17,6 @@ router.post('/findByUser', findByUser);
 router.post('/countUserPost', countUserPost);
 router.post('/deletePost', deletePost);
 router.post('/getRecentPost', getRecentPost);
+router.post('/updatePost', updatePost);
 
 export default router;

@@ -85,6 +85,24 @@ const getRecentPost = (req: Request, res: Response) => {
     });
 };
 
+// Update Post
+const updatePost = async (req: Request, res: Response) => {
+  PostModel.updateOne(
+    { _id: req.body.data.postId },
+    { content: req.body.data.content },
+    (err: Error, post: IPost) => {
+      if (err) {
+        return res.status(400).json({
+          err,
+        });
+      }
+      return res.status(200).json({
+        post,
+      });
+    }
+  );
+};
+
 export {
   upload,
   findPost,
@@ -92,4 +110,5 @@ export {
   countUserPost,
   deletePost,
   getRecentPost,
+  updatePost,
 };

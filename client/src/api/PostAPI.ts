@@ -5,6 +5,11 @@ export type PostDataType = {
   content: string;
 };
 
+export type PostUpdateDataType = {
+  postId: string;
+  content: string;
+};
+
 export const PostAPI = {
   upload: (data: PostDataType) => {
     return HttpRequest.post('/api/posts/upload', data);
@@ -23,5 +28,8 @@ export const PostAPI = {
   },
   getRecentPost: (userIdList: string[]) => {
     return HttpRequest.post('/api/posts/getRecentPost', { userIdList });
+  },
+  updatePost: (data: PostUpdateDataType) => {
+    return HttpRequest.post('/api/posts/updatePost', { data });
   },
 };
