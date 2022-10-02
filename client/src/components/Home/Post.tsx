@@ -1,22 +1,83 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
+import { RootState } from 'redux/store';
+import { DdabongAPI } from 'api/DdabongAPI';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { PostProps } from 'views/home';
 import { FaUserCircle } from 'react-icons/fa';
 import { BsHandThumbsUpFill, BsFillChatFill } from 'react-icons/bs';
-
-import styles from 'styles/components/Home/Post.module.scss';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
-export default function Post({ post }: PostProps) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [index, setIndex] = useState<number>(0);
+import styles from 'styles/components/Home/Post.module.scss';
 
-  const onDdabongClicked = () => {};
-  const dateDiff = calcDateDiff(post.updatedAt);
+export default function Post({ post, posts, setPosts }: PostProps) {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user.user);
+  const [index, setIndex] = useState<number>(0);
+  const [isDdabong, setIsDdabong] = useState<boolean>(false);
+  const [ddabongId, setDdabongId] = useState<string>('');
+
+  useEffect(() => {
+    checkIsDdabong();
+  }, [user]);
+
+  const onDdabongClicked = async () => {
+    try {
+      if (isDdabong && ddabongId !== '') {
+        await DdabongAPI.deleteDdabong(ddabongId);
+        setPosts(
+          posts.map((p) =>
+            p.postId !== post.postId
+              ? p
+              : {
+                  ...p,
+                  ddabongList: p.ddabongList.filter(
+                    (d) => d.ddabongId !== ddabongId
+                  ),
+                }
+          )
+        );
+        setIsDdabong(false);
+        setDdabongId('');
+      } else if (post && user) {
+        const ddabongRes = await DdabongAPI.addDdabong({
+          postId: post.postId,
+          userId: user._id,
+        });
+        setPosts(
+          posts.map((p) =>
+            p.postId !== post.postId
+              ? p
+              : {
+                  ...p,
+                  ddabongList: p.ddabongList.concat({
+                    ddabongId: ddabongRes.data.ddabong._id,
+                    userId: user._id,
+                    name: user.name,
+                  }),
+                }
+          )
+        );
+        setIsDdabong(true);
+        setDdabongId(ddabongRes.data.ddabong._id);
+      }
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
+
+  const checkIsDdabong = () => {
+    for (const ddabong of post.ddabongList) {
+      if (user._id === ddabong.userId) {
+        setIsDdabong(true);
+        setDdabongId(ddabong.ddabongId);
+        return;
+      }
+    }
+    setIsDdabong(false);
+  };
 
   const mediaComponent = (idx: number) => {
     if (post.media.length !== 0) {
@@ -62,9 +123,28 @@ export default function Post({ post }: PostProps) {
           />
         )}
       </section>
-      <div className={styles.buttons}>
+      {post.ddabongList.length !== 0 && (
+        <section className={styles.ddabongCount}>
+          {post.ddabongList.length === 1 ? (
+            <span>
+              <span className={styles.name}>{post.ddabongList[0].name}</span>
+              <span> 님이 따봉을 날렸습니다</span>
+            </span>
+          ) : (
+            <span>
+              <span className={styles.name}>{post.ddabongList[0].name}</span>
+              <span> 외 {post.ddabongList.length} 명이 따봉을 날렸습니다</span>
+            </span>
+          )}
+        </section>
+      )}
+      <section className={styles.buttons}>
         <button className={styles.ddabong} onClick={() => onDdabongClicked()}>
-          <BsHandThumbsUpFill />
+          {isDdabong ? (
+            <BsHandThumbsUpFill style={{ color: '#3069f5' }} />
+          ) : (
+            <BsHandThumbsUpFill />
+          )}
         </button>
         <button
           className={styles.chat}
@@ -72,14 +152,16 @@ export default function Post({ post }: PostProps) {
         >
           <BsFillChatFill />
         </button>
-      </div>
-      <div className={styles.content}>
+      </section>
+      <section className={styles.content}>
         <span className={styles.contentUploader}>
           {post.relationship || post.name}
         </span>
         <p>{post.content}</p>
-        <span className={styles.contentDate}>{dateDiff}</span>
-      </div>
+        <span className={styles.contentDate}>
+          {calcDateDiff(post.updatedAt)}
+        </span>
+      </section>
       <button
         className={styles.moreCommentsBtn}
         onClick={() => navigate(`/post/${post.postId}`)}

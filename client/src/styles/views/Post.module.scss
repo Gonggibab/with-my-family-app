@@ -258,10 +258,23 @@
         }        
       }
 
-      .buttons {
+      .ddabongCount {
         display: flex;
         align-items: center;
         margin-top: 1rem;
+        margin-left: .2rem;
+        width: 100%;
+        font-size: .8rem;
+
+        .name {
+          font-weight: bold;
+        }
+      }
+
+      .buttons {
+        display: flex;
+        align-items: center;
+        margin-top: .6rem;
         width: 100%;
 
         button {          

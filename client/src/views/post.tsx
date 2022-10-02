@@ -19,6 +19,7 @@ import {
 import styles from 'styles/views/Post.module.scss';
 import { CommentAPI } from 'api/CommentAPI';
 import Comment from 'components/Post/Comment';
+import { DdabongAPI } from 'api/DdabongAPI';
 
 type PostInfo = {
   uploader: string;
@@ -30,6 +31,12 @@ type PostInfo = {
 type MediaData = {
   url: string;
   type: string;
+};
+
+type DdabongData = {
+  ddabongId: string;
+  userId: string;
+  name: string;
 };
 
 type CommentData = {
@@ -59,8 +66,11 @@ export default function Post() {
   const [postInfo, setPostInfo] = useState<PostInfo>();
   const [index, setIndex] = useState<number>(0);
   const [media, setMedia] = useState<MediaData[]>([]);
+  const [ddabongs, setDdabongs] = useState<DdabongData[]>([]);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [content, setContent] = useState<string>('');
+  const [isDdabong, setIsDdabong] = useState<boolean>(false);
+  const [ddabongId, setDdabongId] = useState<string>('');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMyPost, setIsMyPost] = useState<boolean>(false);
 
@@ -68,7 +78,11 @@ export default function Post() {
     if (id) {
       getPostData(id);
     }
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    checkIsDdabong();
+  }, [ddabongs]);
 
   const getPostData = async (id: string) => {
     try {
@@ -96,8 +110,18 @@ export default function Post() {
       }
       setMedia(tempMedia);
 
-      updateCommentData();
+      const ddabongList = [];
+      const ddabongRes = await DdabongAPI.getDdabongByPost(post._id);
+      for (const ddabong of ddabongRes.data.ddabong) {
+        ddabongList.push({
+          ddabongId: ddabong._id,
+          userId: ddabong.userId._id,
+          name: ddabong.userId.name,
+        });
+      }
+      setDdabongs(ddabongList);
 
+      updateCommentData();
       dispatch(setIsLoading(false));
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
@@ -118,6 +142,47 @@ export default function Post() {
         });
       }
       setComments(commentList);
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
+
+  const checkIsDdabong = () => {
+    for (const ddabong of ddabongs) {
+      if (user._id === ddabong.userId) {
+        setIsDdabong(true);
+        setDdabongId(ddabong.ddabongId);
+        return;
+      }
+    }
+    setIsDdabong(false);
+  };
+
+  const onDdabongClicked = async () => {
+    try {
+      if (isDdabong && ddabongId !== '') {
+        await DdabongAPI.deleteDdabong(ddabongId);
+        setDdabongs(
+          ddabongs.filter((ddabong) => ddabong.ddabongId !== ddabongId)
+        );
+        setIsDdabong(false);
+        setDdabongId('');
+      } else if (user) {
+        const ddabongRes = await DdabongAPI.addDdabong({
+          postId: id!,
+          userId: user._id,
+        });
+        setDdabongs([
+          ...ddabongs,
+          {
+            ddabongId: ddabongRes.data.ddabong._id,
+            userId: user._id,
+            name: user.name,
+          },
+        ]);
+        setIsDdabong(true);
+        setDdabongId(ddabongRes.data.ddabong._id);
+      }
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
@@ -197,7 +262,7 @@ export default function Post() {
             )}
             <span>{postInfo?.uploader}</span>
           </div>
-          <div className={styles.media}>
+          <section className={styles.media}>
             {renderMedia(media, index)}
             {index > 0 && (
               <RiArrowLeftSLine
@@ -211,10 +276,10 @@ export default function Post() {
                 onClick={() => setIndex(index + 1)}
               />
             )}
-          </div>
+          </section>
         </section>
         <section className={styles.Comments}>
-          <div className={styles.commentBox}>
+          <section className={styles.commentBox}>
             <div className={styles.Comment}>
               <span className={styles.uploader}>{postInfo?.uploader}</span>
               <div className={styles.content}>
@@ -225,16 +290,35 @@ export default function Post() {
               </div>
             </div>
             {renderComments}
-          </div>
-          <div className={styles.buttons}>
-            <button className={styles.ddabong}>
-              <BsHandThumbsUpFill />
+          </section>
+          {ddabongs.length !== 0 && (
+            <section className={styles.ddabongCount}>
+              {ddabongs.length === 1 ? (
+                <span>
+                  <span className={styles.name}>{ddabongs[0].name}</span>
+                  <span> 님이 따봉을 날렸습니다</span>
+                </span>
+              ) : (
+                <span>
+                  <span className={styles.name}>{ddabongs[0].name}</span>
+                  <span> 외 {ddabongs.length} 명이 따봉을 날렸습니다</span>
+                </span>
+              )}
+            </section>
+          )}
+          <section className={styles.buttons}>
+            <button className={styles.ddabong} onClick={onDdabongClicked}>
+              {isDdabong ? (
+                <BsHandThumbsUpFill style={{ color: '#3069f5' }} />
+              ) : (
+                <BsHandThumbsUpFill />
+              )}
             </button>
             <button className={styles.chat} onClick={onChatClicked}>
               <BsFillChatFill />
             </button>
-          </div>
-          <div className={styles.commentInput}>
+          </section>
+          <section className={styles.commentInput}>
             <textarea
               ref={textareaRef}
               placeholder="내용을 입력하세요"
@@ -243,7 +327,7 @@ export default function Post() {
               }}
             />
             <button onClick={onAddCommentClicked}>확인</button>
-          </div>
+          </section>
           <button className={styles.closeBtn} onClick={() => navigate(-1)}>
             뒤로
           </button>

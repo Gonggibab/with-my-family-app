@@ -24,27 +24,29 @@
     min-height: calc(0.9 * variables.$minimum-device-width + 150px);
   }
 
-  .uploader {  
+  .uploader {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding: .3rem 0 .7rem .5rem;
+    margin-bottom: .4rem;
+    margin-left: .8rem;
     width: 100%;
-    height: 50px;
+    height: 2.4rem;
 
     @include mixins.device(mobile) {
-      height: 40px;
+      height: 2rem;
     }
   
     & > img, svg {
       position: relative;
-      width: 40px;
-      height: 40px;
+      width: 2rem;
+      height: 2rem;
       border-radius: 50%;
       object-fit: cover;
 
       @include mixins.device(mobile) {
-        width: 30px;
-        height: 30px;
+        width: 1.8rem;
+        height: 1.8rem;
       }
     }
 
@@ -54,15 +56,13 @@
       font-weight: bold;
     }
   }
-
-
   
   .media {
     flex-grow: 1;
+    flex-shrink: 1;
     position: relative;
     width: 100%;
-    height: 10%;
-    object-fit: cover;
+    height: 60%;
 
     @include mixins.device(mobile) {
       height: calc(100% - 50px);
@@ -103,14 +103,28 @@
     }
   }
 
-
-  
-  .buttons {
+  .ddabongCount {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding-top: .5rem;
+    margin-left: .8rem;
+    padding-top: 1rem;
     width: 100%;
-    height: 40px;
+    height: 2rem;
+    font-size: .7rem;
+
+    .name {
+      font-weight: bold;
+    }
+  }
+  
+  .buttons {    
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-top: 1rem;
+    width: 100%;
+    height: 2rem;
 
     button {
       padding: 0 .5rem;
@@ -128,7 +142,8 @@
     }
   }
   
-  .content {
+  .content {    
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     padding-top: .5rem;
@@ -154,6 +169,7 @@
   }
 
   .moreCommentsBtn {
+    flex-shrink: 0;
     margin: 1rem;
     font-size: .8rem;
     font-weight: bold;

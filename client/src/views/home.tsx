@@ -5,11 +5,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { setIsLoading } from 'redux/_slices/appSlice';
 import { PostAPI } from 'api/PostAPI';
+import { MediaAPI } from 'api/MediaAPI';
+import { DdabongAPI } from 'api/DdabongAPI';
 import Post from 'components/Home/Post';
 import { AiFillFileAdd } from 'react-icons/ai';
 
 import styles from 'styles/views/Home.module.scss';
-import { MediaAPI } from 'api/MediaAPI';
+
+export type MediaData = {
+  url: string;
+  type: string;
+};
+
+type DdabongData = {
+  ddabongId: string;
+  userId: string;
+  name: string;
+};
 
 type postData = {
   postId: string;
@@ -17,18 +29,16 @@ type postData = {
   name: string;
   relationship?: string;
   profile: string;
-  media: Media[];
+  media: MediaData[];
+  ddabongList: DdabongData[];
   content: string;
   updatedAt: string;
 };
 
-export type Media = {
-  url: string;
-  type: string;
-};
-
 export type PostProps = {
   post: postData;
+  posts: postData[];
+  setPosts: React.Dispatch<React.SetStateAction<postData[]>>;
 };
 
 export default function Home() {
@@ -38,50 +48,67 @@ export default function Home() {
   const [posts, setPosts] = useState<postData[]>([]);
 
   useEffect(() => {
-    dispatch(setIsLoading(true));
     if (families.length !== 0) {
       fetchFamilyPosts();
     }
-    dispatch(setIsLoading(false));
   }, [families]);
 
   const fetchFamilyPosts = async () => {
-    const familyIdList = [];
-    for (const family of families) {
-      familyIdList.push(family.userId);
-    }
-
-    const postRes = await PostAPI.getRecentPost(familyIdList);
-    const postList = [];
-    for (const post of postRes.data.posts) {
-      let relationship;
+    try {
+      dispatch(setIsLoading(true));
+      const familyIdList = [];
       for (const family of families) {
-        if (family.userId === post.userId._id) {
-          relationship = family.relationship;
-        }
-      }
-      const mediaList = [];
-      const mediaRes = await MediaAPI.getByPost(post._id);
-      for (const media of mediaRes.data.media) {
-        mediaList.push({ url: media.filePath, type: media.mimeType });
+        familyIdList.push(family.userId);
       }
 
-      postList.push({
-        postId: post._id,
-        userId: post.userId._id,
-        name: post.userId.name,
-        relationship: relationship,
-        profile: post.userId.profile,
-        media: mediaList,
-        content: post.content,
-        updatedAt: post.updatedAt,
-      });
+      const postRes = await PostAPI.getRecentPost(familyIdList);
+      const postList = [];
+      for (const post of postRes.data.posts) {
+        let relationship;
+        for (const family of families) {
+          if (family.userId === post.userId._id) {
+            relationship = family.relationship;
+          }
+        }
+        const mediaList = [];
+        const mediaRes = await MediaAPI.getByPost(post._id);
+        for (const media of mediaRes.data.media) {
+          mediaList.push({ url: media.filePath, type: media.mimeType });
+        }
+
+        const ddabongList = [];
+        const ddabongRes = await DdabongAPI.getDdabongByPost(post._id);
+        for (const ddabong of ddabongRes.data.ddabong) {
+          ddabongList.push({
+            ddabongId: ddabong._id,
+            userId: ddabong.userId._id,
+            name: ddabong.userId.name,
+          });
+        }
+
+        postList.push({
+          postId: post._id,
+          userId: post.userId._id,
+          name: post.userId.name,
+          relationship: relationship,
+          profile: post.userId.profile,
+          media: mediaList,
+          ddabongList: ddabongList,
+          content: post.content,
+          updatedAt: post.updatedAt,
+        });
+      }
+      setPosts(postList);
+      dispatch(setIsLoading(false));
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
-    setPosts(postList);
   };
 
   const postComponents = posts.map((post: postData) => {
-    return <Post key={post.postId} post={post} />;
+    return (
+      <Post key={post.postId} post={post} posts={posts} setPosts={setPosts} />
+    );
   });
 
   return (

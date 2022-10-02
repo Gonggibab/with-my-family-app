@@ -60,6 +60,8 @@ export default function Profile() {
     if (id) {
       getUserData(id);
     }
+
+    return () => {};
   }, [user]);
 
   const getUserData = async (userId: string) => {
