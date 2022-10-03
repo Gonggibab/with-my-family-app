@@ -12,23 +12,20 @@ import {
 } from 'redux/_slices/userSlice';
 import { UserAPI } from 'api/UserAPI';
 import { PostAPI } from 'api/PostAPI';
+import { RelationshipAPI } from 'api/RelationshipAPI';
+import { DdabongAPI } from 'api/DdabongAPI';
+import { CommentAPI } from 'api/CommentAPI';
 import { MediaAPI } from 'api/MediaAPI';
 import PostBox from 'components/Profile/PostBox';
+import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/views/Profile.module.scss';
-import { FaUserCircle } from 'react-icons/fa';
-import { RelationshipAPI } from 'api/RelationshipAPI';
-
-type PostData = {
-  _id: string;
-  content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
 
 type PostBoxData = {
   postId: string;
   filePath: string;
+  ddabongCount: string;
+  commentCount: string;
 };
 
 type UserData = {
@@ -43,8 +40,7 @@ type UserData = {
 };
 
 export type PostBoxProps = {
-  postId: string;
-  filePath: string;
+  postBox: PostBoxData;
 };
 
 export default function Profile() {
@@ -95,17 +91,18 @@ export default function Profile() {
   const getUserPosts = async (userId: string) => {
     try {
       const postRes = await PostAPI.getByUser(userId);
-      const posts: PostData[] = postRes.data.posts;
 
       const postBoxData = [];
-      for (const post of posts) {
-        const postId = post._id;
-        const mediaRes = await MediaAPI.getByPost(postId);
-        const filePath = mediaRes.data.media[0].filePath;
+      for (const post of postRes.data.posts) {
+        const mediaRes = await MediaAPI.getByPost(post._id);
+        const ddabongRes = await DdabongAPI.countDdabongbyPostId(post._id);
+        const commentRes = await CommentAPI.countCommentbyPostId(post._id);
 
         postBoxData.push({
-          postId: postId,
-          filePath: filePath,
+          postId: post._id,
+          filePath: mediaRes.data.media[0].filePath,
+          ddabongCount: ddabongRes.data.count,
+          commentCount: commentRes.data.count,
         });
       }
       setPostBoxes(postBoxData);
@@ -137,13 +134,7 @@ export default function Profile() {
   };
 
   const renderPostBoxes = postBoxes.map((postBox: PostBoxData) => {
-    return (
-      <PostBox
-        key={postBox.postId}
-        postId={postBox.postId}
-        filePath={postBox.filePath}
-      />
-    );
+    return <PostBox key={postBox.postId} postBox={postBox} />;
   });
 
   return (
@@ -160,17 +151,13 @@ export default function Profile() {
         <div className={styles.userInfo}>
           <h3>{userData?.name}</h3>
           <div className={styles.userNumbers}>
-            <div className={styles.userPostNum}>
-              <h4>게시물</h4>
-              <span>{userData?.postCount}</span>
-            </div>
-            <div className={styles.userFamilyNum}>
-              <h4>가족</h4>
-              <span>{userData?.relationCount}</span>
-            </div>
+            <h4>게시물</h4>
+            <span>{userData?.postCount}</span>
+            <h4>가족</h4>
+            <span>{userData?.relationCount}</span>
           </div>
           <div className={styles.userButtons}>
-            {isMyProfile && (
+            {isMyProfile ? (
               <>
                 {' '}
                 <button className={styles.profileEditBtn}>계정 관리</button>
@@ -181,6 +168,13 @@ export default function Profile() {
                   로그아웃
                 </button>
               </>
+            ) : (
+              <button
+                className={styles.logoutBtn}
+                onClick={() => onLogoutClicked()}
+              >
+                프로필 나가기
+              </button>
             )}
           </div>
         </div>

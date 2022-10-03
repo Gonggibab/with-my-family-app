@@ -21,11 +21,24 @@
     object-position: 50% 50%;
   }
 
-  span {
+  .postInfo {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 100%;
     color: colors.$white;
+    font-size: 1.2rem;
+
+    & > svg {
+      margin-right: 1rem;
+    }
+
+    .ddabong {
+      margin-right: 1.6rem;
+    }
   }
 }

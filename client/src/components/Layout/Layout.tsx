@@ -83,7 +83,7 @@ export default function Layout({ children }: LayoutProps) {
           <Link
             to={isLogin ? `/profile/${user._id}` : '/login'}
             className={
-              checkCategory(currentPage, '/profile') ||
+              checkCategory(currentPage, `/profile/${user._id}`) ||
               checkCategory(currentPage, '/login')
                 ? styles.active
                 : ''

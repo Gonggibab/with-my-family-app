@@ -24,6 +24,7 @@ import styles from 'styles/views/Post.module.scss';
 
 type PostInfo = {
   uploader: string;
+  relationship: string;
   profile: string;
   content: string;
   updatedAt: string;
@@ -44,6 +45,7 @@ type CommentData = {
   commentId: string;
   userId: string;
   uploader: string;
+  relationship: string;
   content: string;
   updatedAt: string;
 };
@@ -74,6 +76,7 @@ export default function Post() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
+  const families = useSelector((state: RootState) => state.user.families);
   const [postInfo, setPostInfo] = useState<PostInfo>();
   const [media, setMedia] = useState<MediaData[]>([]);
   const [idx, setIdx] = useState<number>(0);
@@ -101,8 +104,18 @@ export default function Post() {
       dispatch(setIsLoading(true));
       const postRes = await PostAPI.getPost(id);
       const post = postRes.data.post;
+      let relationship = '';
+      for (const family of families) {
+        if (family.userId === post.userId._id) {
+          if (family.relationship) {
+            relationship = family.relationship;
+          }
+        }
+      }
+
       setPostInfo({
         uploader: post.userId.name,
+        relationship: relationship,
         profile: post.userId.profile,
         content: post.content,
         updatedAt: post.updatedAt,
@@ -145,10 +158,20 @@ export default function Post() {
       const commentRes = await CommentAPI.getCommentsByPost(id!);
       const commentList = [];
       for (const comment of commentRes.data.comment) {
+        let relationship = '';
+        for (const family of families) {
+          if (family.userId === comment.userId._id) {
+            if (family.relationship) {
+              relationship = family.relationship;
+            }
+          }
+        }
+
         commentList.push({
           commentId: comment._id,
           userId: comment.userId._id,
           uploader: comment.userId.name,
+          relationship: relationship,
           content: comment.content,
           updatedAt: comment.updatedAt,
         });
@@ -269,7 +292,11 @@ export default function Post() {
             ) : (
               <FaUserCircle />
             )}
-            <span>{postInfo?.uploader}</span>
+            <span>
+              {postInfo?.relationship !== ''
+                ? postInfo?.relationship
+                : postInfo?.uploader}
+            </span>
           </div>
           <section className={styles.media}>
             <MediaViewer media={media} idx={idx} setIdx={setIdx} />
@@ -278,7 +305,11 @@ export default function Post() {
         <section className={styles.Comments}>
           <section className={styles.commentBox}>
             <div className={styles.Comment}>
-              <span className={styles.uploader}>{postInfo?.uploader}</span>
+              <span className={styles.uploader}>
+                {postInfo?.relationship !== ''
+                  ? postInfo?.relationship
+                  : postInfo?.uploader}
+              </span>
               <div className={styles.content}>
                 <p>
                   {postInfo?.content}{' '}

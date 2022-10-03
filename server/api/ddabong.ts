@@ -52,4 +52,15 @@ const deleteDdabong = (req: Request, res: Response) => {
   );
 };
 
-export { addDdabong, findDdabong, deleteDdabong };
+// Find and Count Ddabong of a Post
+const countDdabong = (req: Request, res: Response) => {
+  DdabongModel.find({ postId: req.body.postId }).count(function (err, count) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({ count });
+  });
+};
+
+export { addDdabong, findDdabong, deleteDdabong, countDdabong };

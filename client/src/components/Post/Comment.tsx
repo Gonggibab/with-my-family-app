@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { CommentAPI } from 'api/CommentAPI';
+import DeleteConfirm from './DeleteConfirm';
 import { CommentProps } from 'views/post';
 
 import styles from 'styles/views/Post.module.scss';
-import DeleteConfirm from './DeleteConfirm';
 
 export type DeleteConfrimProps = {
   commentId: string;
@@ -54,7 +54,9 @@ export default function Comment({ comment, updateCommentData }: CommentProps) {
           updateCommentData={updateCommentData}
         />
       )}
-      <span className={styles.uploader}>{comment.uploader}</span>
+      <span className={styles.uploader}>
+        {comment.relationship !== '' ? comment.relationship : comment.uploader}
+      </span>
       <div className={styles.content}>
         {isEdit ? (
           <>

@@ -70,35 +70,30 @@
 
       .userNumbers {        
         display: flex;
+        align-items: center;
         margin-bottom: 1.4rem;
 
         @include mixins.device(mobile) {
           margin-bottom: .8rem;
+          font-size: .8rem;
         }
 
-        & > div {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
+        h4 {
+          margin-right: .5rem;   
+          font-size: 1rem; 
+          
           @include mixins.device(mobile) {
-            font-size: .8rem;
-          }
-
-          h4 {
-            margin-left: 1rem;   
-            font-size: 1rem; 
-            
-            @include mixins.device(mobile) {
-              margin-left: .6rem;   
-              font-size: .6rem;
-            }
-          }
-
-          span {
-            margin-left: .5rem;
+            font-size: .6rem;
           }
         }
+
+        span {
+          margin-right: 1rem;   
+        }
+
+        @include mixins.device(mobile) {
+          margin-right: .6rem;   
+        }   
       }
 
       .userButtons {

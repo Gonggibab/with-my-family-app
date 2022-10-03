@@ -97,9 +97,28 @@ const deleteRelationship = (req: Request, res: Response) => {
   );
 };
 
+// Update Relationship
+const updateRelationship = (req: Request, res: Response) => {
+  RelationshipModel.updateOne(
+    { _id: req.body.data.relationId },
+    { relationship: req.body.data.relationship },
+    (err: Error, relationship: IRelationship) => {
+      if (err) {
+        return res.status(400).json({
+          err,
+        });
+      }
+      return res.status(200).json({
+        relationship,
+      });
+    }
+  );
+};
+
 export {
   addRelationship,
   findRelationship,
   countRelationship,
   deleteRelationship,
+  updateRelationship,
 };

@@ -28,4 +28,9 @@ export const CommentAPI = {
       data,
     });
   },
+  countCommentbyPostId: (postId: string) => {
+    return HttpRequest.post('/api/comments/countCommentbyPostId', {
+      postId,
+    });
+  },
 };

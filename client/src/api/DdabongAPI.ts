@@ -17,4 +17,9 @@ export const DdabongAPI = {
       ddabongId,
     });
   },
+  countDdabongbyPostId: (postId: string) => {
+    return HttpRequest.post('/api/ddabong/countDdabongbyPostId', {
+      postId,
+    });
+  },
 };

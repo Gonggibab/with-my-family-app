@@ -67,4 +67,15 @@ const updateComment = (req: Request, res: Response) => {
   );
 };
 
-export { addComment, findComments, deleteComment, updateComment };
+// Find and Count Comment of a Post
+const countComment = (req: Request, res: Response) => {
+  CommentModel.find({ postId: req.body.postId }).count(function (err, count) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({ count });
+  });
+};
+
+export { addComment, findComments, deleteComment, updateComment, countComment };

@@ -5,6 +5,11 @@ export type RelationshipDataType = {
   user2Id: string;
 };
 
+export type RelationUpdateDataType = {
+  relationId: string;
+  relationship: string;
+};
+
 export const RelationshipAPI = {
   addRelationship: (data: RelationshipDataType) => {
     return HttpRequest.post('/api/relationShip/addRelationship', data);
@@ -18,6 +23,11 @@ export const RelationshipAPI = {
   deleteRelationship: (relationId: string) => {
     return HttpRequest.post('/api/relationShip/deleteRelationship', {
       relationId,
+    });
+  },
+  updateRelationship: (data: RelationUpdateDataType) => {
+    return HttpRequest.post('/api/relationShip/updateRelationship', {
+      data,
     });
   },
 };
