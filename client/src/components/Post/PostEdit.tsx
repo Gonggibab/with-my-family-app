@@ -1,5 +1,4 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
@@ -25,7 +24,6 @@ export default function PostEdit({
   setIsEditOpen,
   setIsMenuOpen,
 }: PostEditProps) {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
   const [mediaList, setMediaList] = useState<MediaData[]>(media);
@@ -34,12 +32,6 @@ export default function PostEdit({
   const [idx, setIdx] = useState<number>(0);
   const [content, setContent] = useState<string>(postContent);
   const [isEditActive, setIsEditActive] = useState<boolean>(false);
-
-  useEffect(() => {
-    console.log(mediaList);
-    console.log(newFiles);
-    console.log(toDeleteFiles);
-  }, [mediaList, newFiles]);
 
   const onFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
     const fileList = e.currentTarget.files!;

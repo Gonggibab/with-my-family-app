@@ -11,6 +11,7 @@ export default function PostMenu({
   postId,
   setIsMenuOpen,
   setIsEditOpen,
+  setIdx,
 }: PostMenuProps) {
   const navigate = useNavigate();
   const [isConfirm, setIsConfirm] = useState<boolean>(false);
@@ -26,6 +27,7 @@ export default function PostMenu({
   const onEditClicked = () => {
     setIsMenuOpen(false);
     setIsEditOpen(true);
+    setIdx(0);
   };
 
   const onCancelClicked = async () => {

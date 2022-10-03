@@ -57,6 +57,7 @@ export type PostMenuProps = {
   postId: string;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIdx: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type PostEditProps = {
@@ -65,7 +66,6 @@ export type PostEditProps = {
   postContent: string;
   setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setViewerIndex: (cb: any) => void;
 };
 
 export default function Post() {
@@ -76,6 +76,7 @@ export default function Post() {
   const user = useSelector((state: RootState) => state.user.user);
   const [postInfo, setPostInfo] = useState<PostInfo>();
   const [media, setMedia] = useState<MediaData[]>([]);
+  const [idx, setIdx] = useState<number>(0);
   const [ddabongs, setDdabongs] = useState<DdabongData[]>([]);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [content, setContent] = useState<string>('');
@@ -169,10 +170,6 @@ export default function Post() {
     setIsDdabong(false);
   };
 
-  const setViewerIndex = (cb: React.Dispatch<React.SetStateAction<number>>) => {
-    cb(0);
-  };
-
   const onDdabongClicked = async () => {
     try {
       if (isDdabong && ddabongId !== '') {
@@ -244,6 +241,7 @@ export default function Post() {
           postId={id!}
           setIsMenuOpen={setIsMenuOpen}
           setIsEditOpen={setIsEditOpen}
+          setIdx={setIdx}
         />
       )}
       {isEditOpen && (
@@ -253,7 +251,6 @@ export default function Post() {
           postContent={postInfo?.content!}
           setIsEditOpen={setIsEditOpen}
           setIsMenuOpen={setIsMenuOpen}
-          setViewerIndex={setViewerIndex}
         />
       )}
       <div className={styles.PostBox}>
@@ -275,7 +272,7 @@ export default function Post() {
             <span>{postInfo?.uploader}</span>
           </div>
           <section className={styles.media}>
-            <MediaViewer media={media} setViewerIndex={setViewerIndex} />
+            <MediaViewer media={media} idx={idx} setIdx={setIdx} />
           </section>
         </section>
         <section className={styles.Comments}>

@@ -5,7 +5,8 @@ import styles from 'styles/components/MediaViewer.module.scss';
 
 type MediaViewerProps = {
   media: MediaData[];
-  setViewerIndex?: (cb: React.Dispatch<React.SetStateAction<number>>) => void;
+  idx: number;
+  setIdx: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type MediaData = {
@@ -13,11 +14,7 @@ export type MediaData = {
   type: string;
 };
 
-const MediaViewer = ({ media, setViewerIndex }: MediaViewerProps) => {
-  const [idx, setIdx] = useState<number>(0);
-
-  // setViewerIndex(setIdx);
-
+const MediaViewer = ({ media, idx, setIdx }: MediaViewerProps) => {
   const renderMedia = (idx: number) => {
     if (media.length !== 0) {
       const file = media[idx];

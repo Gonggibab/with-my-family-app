@@ -15,6 +15,7 @@ import styles from 'styles/components/Home/Post.module.scss';
 export default function Post({ post, posts, setPosts }: PostProps) {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
+  const [idx, setIdx] = useState<number>(0);
   const [isDdabong, setIsDdabong] = useState<boolean>(false);
   const [ddabongId, setDdabongId] = useState<string>('');
 
@@ -89,7 +90,7 @@ export default function Post({ post, posts, setPosts }: PostProps) {
         <span>{post.relationship || post.name}</span>
       </div>
       <section className={styles.media}>
-        <MediaViewer media={post.media} />
+        <MediaViewer media={post.media} idx={idx} setIdx={setIdx} />
       </section>
       {post.ddabongList.length !== 0 && (
         <section className={styles.ddabongCount}>
