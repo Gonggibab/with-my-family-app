@@ -3,7 +3,7 @@ import { AxiosRequestHeaders } from 'axios';
 
 export const MediaAPI = {
   uploadMedia: async (files: File[], postId: string) => {
-    let formData = new FormData();
+    const formData = new FormData();
     for (const file of files) {
       formData.append('file', file);
     }
@@ -29,6 +29,32 @@ export const MediaAPI = {
         size: file.size,
       });
     }
+
+    return HttpRequest.post('/api/media/uploadDB', mediaData);
+  },
+  uploadMediaForProfile: async (file: File, userId: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const header: AxiosRequestHeaders = {
+      'content-type': 'multipart/form-data',
+    };
+    const res = await HttpRequest.post(
+      '/api/media/uploadServer',
+      formData,
+      header
+    );
+
+    const fileData = res.data.files[0];
+    const mediaData = [];
+    mediaData.push({
+      userId: userId,
+      filename: fileData.filename,
+      filePath: fileData.path,
+      mimeType: fileData.mimetype,
+      originalName: fileData.originalname,
+      size: fileData.size,
+    });
 
     return HttpRequest.post('/api/media/uploadDB', mediaData);
   },

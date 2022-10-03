@@ -34,6 +34,17 @@ export type FamilyRequestDataType = {
   requesteeId: string;
 };
 
+type UpdateData = {
+  name?: string;
+  birthday?: Date;
+  profile?: string;
+};
+
+export type UserUpdateDataType = {
+  userId: string;
+  update: UpdateData;
+};
+
 export const UserAPI = {
   register: (data: UserDataType) => {
     return HttpRequest.post('/api/users/register', data);
@@ -61,5 +72,8 @@ export const UserAPI = {
   },
   searchUser: (string: string) => {
     return HttpRequest.post('/api/users/searchUser', { string });
+  },
+  updateUser: (data: UserUpdateDataType) => {
+    return HttpRequest.post('/api/users/updateUser', data);
   },
 };

@@ -21,7 +21,7 @@ interface UserStatics extends Model<IUser> {
   findByToken(token: string, cb: any): void;
 }
 
-const userSchema = new mongoose.Schema<IUser, UserStatics>(
+const UserSchema = new mongoose.Schema<IUser, UserStatics>(
   {
     email: {
       type: String,
@@ -63,10 +63,10 @@ const userSchema = new mongoose.Schema<IUser, UserStatics>(
 );
 
 // create indexes for the fields to search
-userSchema.index({ email: 'text' });
+UserSchema.index({ email: 'text' });
 
 // Encrypt user password before saving into DB
-userSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
   const user = this;
   const saltRounds = 10;
 
@@ -84,7 +84,7 @@ userSchema.pre('save', function (next) {
 });
 
 // check encrypted password with given password
-userSchema.methods.comparePassword = function (password: string, cb: any) {
+UserSchema.methods.comparePassword = function (password: string, cb: any) {
   bcrpyt.compare(password, this.password, (err, isMatch) => {
     if (err) return cb(err);
     cb(null, isMatch);
@@ -92,7 +92,7 @@ userSchema.methods.comparePassword = function (password: string, cb: any) {
 };
 
 // generate token and save into DB
-userSchema.methods.generateToken = function (isRemainLogin: boolean, cb: any) {
+UserSchema.methods.generateToken = function (isRemainLogin: boolean, cb: any) {
   const user = this;
 
   const token = jwt.sign(user._id.toHexString(), 'userToken');
@@ -115,7 +115,7 @@ userSchema.methods.generateToken = function (isRemainLogin: boolean, cb: any) {
   });
 };
 
-userSchema.statics.findByToken = function (token: string, cb: any) {
+UserSchema.statics.findByToken = function (token: string, cb: any) {
   const user = this;
 
   // decode token
@@ -132,5 +132,5 @@ userSchema.statics.findByToken = function (token: string, cb: any) {
   });
 };
 
-const UserModel = mongoose.model<IUser, UserStatics>('User', userSchema);
+const UserModel = mongoose.model<IUser, UserStatics>('User', UserSchema);
 export default UserModel;

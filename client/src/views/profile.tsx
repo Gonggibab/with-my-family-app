@@ -17,6 +17,7 @@ import { DdabongAPI } from 'api/DdabongAPI';
 import { CommentAPI } from 'api/CommentAPI';
 import { MediaAPI } from 'api/MediaAPI';
 import PostBox from 'components/Profile/PostBox';
+import ProfileManage from 'components/Profile/ProfileManage';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/views/Profile.module.scss';
@@ -43,6 +44,12 @@ export type PostBoxProps = {
   postBox: PostBoxData;
 };
 
+export type ProfileManageProps = {
+  userData: UserData;
+  setIsManagement: React.Dispatch<React.SetStateAction<boolean>>;
+  getUserData: (userId: string) => void;
+};
+
 export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,27 +58,22 @@ export default function Profile() {
   const [userData, setUserData] = useState<UserData>();
   const [postBoxes, setPostBoxes] = useState<PostBoxData[]>([]);
   const [isMyProfile, setIsMyProfile] = useState<boolean>(false);
+  const [isManagement, setIsManagement] = useState<boolean>(false);
 
   useEffect(() => {
     if (id) {
       getUserData(id);
     }
-
-    return () => {};
   }, [user]);
 
   const getUserData = async (userId: string) => {
     try {
       dispatch(setIsLoading(true));
-      let userData: UserData;
       if (user._id === userId) {
-        userData = user;
         setIsMyProfile(true);
-      } else {
-        const userRes = await UserAPI.getUser(userId);
-        userData = userRes.data.user;
       }
-
+      const userRes = await UserAPI.getUser(userId);
+      const userData = userRes.data.user;
       const postRes = await PostAPI.countUserPost(userData._id);
       const relationRes = await RelationshipAPI.countRelationship(userData._id);
 
@@ -139,10 +141,20 @@ export default function Profile() {
 
   return (
     <div className={styles.container}>
+      {isManagement && (
+        <ProfileManage
+          userData={userData!}
+          setIsManagement={setIsManagement}
+          getUserData={getUserData}
+        />
+      )}
       <div className={styles.userProfile}>
         <div className={styles.userImage}>
           {userData?.profile ? (
-            <img src={userData.profile} alt="사용자 프로필 사진" />
+            <img
+              src={`http://localhost:5000/${userData.profile}`}
+              alt="사용자 프로필 사진"
+            />
           ) : (
             <FaUserCircle />
           )}
@@ -160,7 +172,12 @@ export default function Profile() {
             {isMyProfile ? (
               <>
                 {' '}
-                <button className={styles.profileEditBtn}>계정 관리</button>
+                <button
+                  className={styles.profileEditBtn}
+                  onClick={() => setIsManagement(true)}
+                >
+                  계정 관리
+                </button>
                 <button
                   className={styles.logoutBtn}
                   onClick={() => onLogoutClicked()}
@@ -169,10 +186,7 @@ export default function Profile() {
                 </button>
               </>
             ) : (
-              <button
-                className={styles.logoutBtn}
-                onClick={() => onLogoutClicked()}
-              >
+              <button className={styles.logoutBtn} onClick={() => navigate(-1)}>
                 프로필 나가기
               </button>
             )}

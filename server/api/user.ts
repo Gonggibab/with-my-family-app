@@ -160,6 +160,20 @@ const searchUser = async (req: Request, res: Response) => {
   );
 };
 
+// Update User
+const updateUser = async (req: Request, res: Response) => {
+  UserModel.updateOne(
+    { _id: req.body.userId },
+    req.body.update,
+    (err: Error, user: IUser[]) => {
+      if (err) {
+        return res.status(400).json({ err });
+      }
+      return res.status(200).json({ user });
+    }
+  );
+};
+
 export {
   register,
   checkDuplicateEmail,
@@ -168,4 +182,5 @@ export {
   logout,
   findUser,
   searchUser,
+  updateUser,
 };

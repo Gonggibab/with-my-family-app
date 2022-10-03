@@ -30,7 +30,6 @@
     max-height: calc(800px);
     border-radius: .8rem;
     background: var(--component-color);
-    box-shadow: var(--post-shadow-color) 0px 50px 100px -20px;
   
     @include mixins.device(mobile) {
       width: 90vw;

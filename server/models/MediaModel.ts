@@ -12,7 +12,7 @@ export interface IMedia extends Document {
   updatedAt?: Date;
 }
 
-const mediaSchema = new mongoose.Schema<IMedia>(
+const MediaSchema = new mongoose.Schema<IMedia>(
   {
     postId: {
       type: Schema.Types.ObjectId,
@@ -41,5 +41,5 @@ const mediaSchema = new mongoose.Schema<IMedia>(
   { timestamps: true }
 );
 
-const MediaModel = mongoose.model<IMedia>('Media', mediaSchema);
+const MediaModel = mongoose.model<IMedia>('Media', MediaSchema);
 export default MediaModel;

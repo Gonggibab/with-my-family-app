@@ -7,7 +7,7 @@ export interface IPost extends Document {
   updatedAt?: Date;
 }
 
-const postSchema = new mongoose.Schema<IPost>(
+const PostSchema = new mongoose.Schema<IPost>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -20,5 +20,5 @@ const postSchema = new mongoose.Schema<IPost>(
   { timestamps: true }
 );
 
-const PostModel = mongoose.model<IPost>('Post', postSchema);
+const PostModel = mongoose.model<IPost>('Post', PostSchema);
 export default PostModel;
