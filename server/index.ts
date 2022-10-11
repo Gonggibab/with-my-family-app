@@ -62,6 +62,7 @@ const onConnection = (
     SocketData
   >
 ) => {
+  console.log(socket);
   userSocket(io, socket);
 };
 

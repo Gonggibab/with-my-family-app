@@ -21,6 +21,9 @@ html[data-theme="light"] {
 
   // Profile
   --profile-hr-color: #{$dark-grey};
+
+  // Chat
+  --profile-hr-color: #{$dark-grey};
 }
 
 html[data-theme="dark"] {
@@ -44,4 +47,7 @@ html[data-theme="dark"] {
 
   // Profile
   --profile-hr-color: #{$light-black};
+
+  // Chat
+  --profile-hr-color: #{$dark-black};
 }
