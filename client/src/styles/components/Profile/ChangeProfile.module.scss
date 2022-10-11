@@ -1,0 +1,110 @@
+@use '../../abstacts/colors';
+@use '../../abstacts/mixins';
+@use '../../abstacts/variables';
+
+.ChangeProfile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 30%;
+
+  @include mixins.device(mobile) {
+    width: 90%;
+  }
+
+  .userProfile {
+    & > img, svg {
+      width: 8rem;
+      height: 8rem;
+      object-fit: cover;
+      object-position: 50% 50%;
+      border-radius: 50%;
+
+      @include mixins.device(mobile) {
+        width: 8rem;
+        height: 8rem;
+      }
+    }
+  }
+  
+  .profileButtons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 2rem;
+
+    .fileInput {
+      .imgAddBtn {   
+        display: block;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+        padding: .4rem .8rem;
+        font-size: .8rem;
+        font-weight: bold;
+        border-radius: 1rem;
+        color: colors.$white;
+        background-color: colors.$blue;
+        transition: all .2s ease-in;
+        cursor: pointer;
+
+        &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+        }   
+      }
+
+      input[type="file"] {
+        position: absolute;
+        width: 0;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+      }
+    }
+
+    & > button {
+      margin-top: .8rem;
+      padding: .4rem .8rem;
+      width: fit-content;
+      font-size: .8rem;
+      font-weight: bold;
+      border-radius: 1rem;
+      
+    }
+
+    .deleteBtn {
+      color: colors.$white;
+      background-color: colors.$red;
+
+      &:hover {
+        color: colors.$red;
+        background-color: colors.$white;
+      }
+    }
+
+    .changeBtn {
+      color: colors.$white;
+      background-color: colors.$blue;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+
+    .cancelBtn {
+      color: var(--bg-color);
+      background-color: var(--color);
+
+      &:hover {
+        color: var(--color);
+        background-color: var(--bg-color);
+      }
+    }
+  }
+}

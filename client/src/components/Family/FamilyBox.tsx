@@ -1,17 +1,18 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { RootState } from 'redux/store';
 import { RelationshipAPI } from 'api/RelationshipAPI';
+import { convertURL } from 'utils/convertURL';
+import fetchFamilyData from 'utils/fetchFamilyData';
 import { FamilyBoxProps } from 'views/family';
+import FamilyBoxMenu from './FamilyBoxMenu';
 import { FaUserCircle } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import { AiFillEdit } from 'react-icons/ai';
 
 import styles from 'styles/components/Family/FamilyBox.module.scss';
-import FamilyBoxMenu from './FamilyBoxMenu';
-import { useDispatch, useSelector } from 'react-redux';
-import fetchFamilyData from 'utils/fetchFamilyData';
-import { RootState } from 'redux/store';
-import { useNavigate } from 'react-router-dom';
 
 export type FamilyBoxMenuProps = {
   relationId: string;
@@ -44,7 +45,7 @@ export default function FamilyBox({ family }: FamilyBoxProps) {
     <div className={styles.FamilyBox}>
       <section className={styles.familyProfile}>
         {family.profile ? (
-          <img src={family.profile} alt="사용자 프로필" />
+          <img src={convertURL(family.profile)} alt="사용자 프로필" />
         ) : (
           <FaUserCircle />
         )}

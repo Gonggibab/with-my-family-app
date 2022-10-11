@@ -6,6 +6,7 @@ import { RootState } from 'redux/store';
 import { DdabongAPI } from 'api/DdabongAPI';
 import MediaViewer from 'components/MediaViewer';
 import { calcDateDiff } from 'utils/calcDateDiff';
+import { convertURL } from 'utils/convertURL';
 import { PostProps } from 'views/home';
 import { FaUserCircle } from 'react-icons/fa';
 import { BsHandThumbsUpFill, BsFillChatFill } from 'react-icons/bs';
@@ -83,7 +84,7 @@ export default function Post({ post, posts, setPosts }: PostProps) {
     <article className={styles.post}>
       <div className={styles.uploader}>
         {post.profile ? (
-          <img src={post.profile} alt="사용자 프로필" />
+          <img src={convertURL(post.profile)} alt="사용자 프로필" />
         ) : (
           <FaUserCircle />
         )}

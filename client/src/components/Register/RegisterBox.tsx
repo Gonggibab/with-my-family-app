@@ -1,20 +1,8 @@
 import { MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { PayloadAction } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
 
-import { RootState } from 'redux/store';
-import {
-  setBDay,
-  setEmail,
-  setIsValidatePage,
-  setName,
-  setPassCheck,
-  setPassword,
-  setValidationNum,
-} from 'redux/_slices/registerSlice';
-import RegisterInput from 'components/Register/RegisterInput';
-import RegisterPasswordInput from 'components/Register/RegisterPasswordInput';
+import Input from 'components/Input';
+import { RegisterBoxProps } from 'views/register';
 import { sendEmailVerification } from 'utils/sendEmail';
 import {
   validateAllInputs,
@@ -28,39 +16,20 @@ import {
 import styles from 'styles/components/Register/RegisterBox.module.scss';
 import logo from 'assets/createAccount.svg';
 
-export type RegisterInputProps = {
-  title: string;
-  inputType: string;
-  inputMaxLength?: number;
-  inputPlaceholder: string;
-  inputValue: string;
-  setValue: (value: string) => PayloadAction<string>;
-  validateInput: (target: HTMLInputElement, str: string) => void;
-};
-
-export type RegisterPasswordInputProps = {
-  title: string;
-  inputType: string;
-  inputMaxLength?: number;
-  inputPlaceholder: string;
-  inputValue: string;
-  password: string;
-  setValue: (value: string) => PayloadAction<string>;
-  validateInput: (
-    target: HTMLInputElement,
-    str: string,
-    password: string
-  ) => void;
-};
-
-export default function RegisterBox() {
-  const dispatch = useDispatch();
-  const email = useSelector((state: RootState) => state.register.email);
-  const password = useSelector((state: RootState) => state.register.password);
-  const passCheck = useSelector((state: RootState) => state.register.passCheck);
-  const name = useSelector((state: RootState) => state.register.name);
-  const bDay = useSelector((state: RootState) => state.register.bDay);
-
+export default function RegisterBox({
+  email,
+  password,
+  passCheck,
+  name,
+  bDay,
+  setEmail,
+  setPassword,
+  setPassCheck,
+  setName,
+  setBDay,
+  setValidationNum,
+  setIsValidatePage,
+}: RegisterBoxProps) {
   const onRegisterClicked = (e: MouseEvent<HTMLButtonElement>) => {
     validateAllInputs(
       e.currentTarget,
@@ -74,70 +43,80 @@ export default function RegisterBox() {
         const validationNum = sendEmailVerification(name, email);
 
         if (validationNum !== '') {
-          dispatch(setValidationNum(validationNum));
-          dispatch(setIsValidatePage(true));
+          setValidationNum(validationNum);
+          setIsValidatePage(true);
         }
       }
     });
   };
 
   const onBackClicked = () => {
-    dispatch(setEmail(''));
-    dispatch(setPassword(''));
-    dispatch(setPassCheck(''));
-    dispatch(setName(''));
-    dispatch(setBDay(''));
+    setEmail('');
+    setPassword('');
+    setPassCheck('');
+    setName('');
+    setBDay('');
   };
 
   return (
     <section className={styles.registerBox}>
       <img className={styles.logo} src={logo} alt="계정 만들기" />
       <div className={styles.inputs}>
-        <RegisterInput
-          title="이메일 *"
-          inputType="text"
-          inputMaxLength={320}
-          inputPlaceholder="example1234@gmail.com"
-          inputValue={email}
-          setValue={setEmail}
-          validateInput={validateEmail}
-        />
-        <RegisterPasswordInput
-          title="비밀번호 *"
-          inputType="password"
-          inputPlaceholder="8자 이상, 문자/숫자/기호 사용가능"
-          inputValue={password}
-          password={password}
-          setValue={setPassword}
-          validateInput={validatePassword}
-        />
-        <RegisterPasswordInput
-          title="비밀번호 확인 *"
-          inputType="password"
-          inputPlaceholder="비밀번호를 한번 더 입력해주세요"
-          inputValue={passCheck}
-          password={password}
-          setValue={setPassCheck}
-          validateInput={validatePassCheck}
-        />
-        <RegisterInput
-          title="이름 *"
-          inputType="text"
-          inputMaxLength={50}
-          inputPlaceholder="홍길동"
-          inputValue={name}
-          setValue={setName}
-          validateInput={validateName}
-        />
-        <RegisterInput
-          title="생일"
-          inputType="text"
-          inputMaxLength={10}
-          inputPlaceholder="yyyy-mm-dd"
-          inputValue={bDay}
-          setValue={setBDay}
-          validateInput={validatebDay}
-        />
+        <div className={styles.input}>
+          <span className={styles.title}>이메일 *</span>
+          <Input
+            type="text"
+            maxLength={320}
+            placeholder="example1234@gmail.com"
+            value={email}
+            setValue={setEmail}
+            validateInput={validateEmail}
+          />
+        </div>
+        <div className={styles.input}>
+          <span className={styles.title}>비밀번호 *</span>
+          <Input
+            type="password"
+            placeholder="8자 이상, 문자/숫자/기호 사용가능"
+            value={password}
+            password={password}
+            setValue={setPassword}
+            validateInput={validatePassword}
+          />
+        </div>
+        <div className={styles.input}>
+          <span className={styles.title}>비밀번호 확인 *</span>
+          <Input
+            type="password"
+            placeholder="비밀번호를 한번 더 입력해주세요"
+            value={passCheck}
+            password={password}
+            setValue={setPassCheck}
+            validateInput={validatePassCheck}
+          />
+        </div>
+        <div className={styles.input}>
+          <span className={styles.title}>이름 *</span>
+          <Input
+            type="text"
+            maxLength={50}
+            placeholder="홍길동"
+            value={name}
+            setValue={setName}
+            validateInput={validateName}
+          />
+        </div>
+        <div className={styles.input}>
+          <span className={styles.title}>생일</span>
+          <Input
+            type="text"
+            maxLength={10}
+            placeholder="yyyy-mm-dd"
+            value={bDay}
+            setValue={setBDay}
+            validateInput={validatebDay}
+          />
+        </div>
         <button
           className={styles.regisButton}
           onClick={(e) => onRegisterClicked(e)}

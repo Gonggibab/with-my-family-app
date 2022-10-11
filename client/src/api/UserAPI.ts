@@ -76,4 +76,13 @@ export const UserAPI = {
   updateUser: (data: UserUpdateDataType) => {
     return HttpRequest.post('/api/users/updateUser', data);
   },
+  updatePassword: (password: string) => {
+    return HttpRequest.post('/api/users/updatePassword', { password });
+  },
+  checkPassword: (password: string) => {
+    return HttpRequest.post('/api/users/checkPassword', { password });
+  },
+  deleteUser: () => {
+    return HttpRequest.get('/api/users/deleteUser');
+  },
 };

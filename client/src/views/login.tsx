@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
-import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { UserAPI } from 'api/UserAPI';
 import GoogleLoginButton from 'components/Login/GoogleLogin';
 import NaverLoginButton from 'components/Login/NaverLogin';
 
 import styles from 'styles/views/Login.module.scss';
 import logo from 'assets/logo_kr.svg';
+import Input from 'components/Input';
 
 declare global {
   interface Window {
@@ -21,33 +21,15 @@ declare global {
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isRemainLogin, setIsRemainLogin] = useState<boolean>(false);
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
-
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const testRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (isLogin) {
       navigate('/');
     }
-
-    setEmail(emailRef.current!.value);
-    setPassword(passwordRef.current!.value);
   }, [isLogin, navigate]);
-
-  const onPasswordShow = () => {
-    setShowPassword(!showPassword);
-    if (!showPassword) {
-      passwordRef.current!.type = 'text';
-    } else {
-      passwordRef.current!.type = 'password';
-    }
-  };
 
   const onLoginClicked = (target: HTMLButtonElement) => {
     const errElem = target.previousElementSibling as HTMLElement;
@@ -82,23 +64,18 @@ export default function Login() {
     <div className={styles.container}>
       <section className={styles.loginBox}>
         <img className={styles.logo} src={logo} alt="로고" />
-        <input
-          ref={emailRef}
+        <Input
           type="text"
           placeholder="이메일을 입력하세요"
-          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          setValue={setEmail}
         />
-        <div className={styles.passwordInput}>
-          <input
-            ref={passwordRef}
-            type="password"
-            placeholder="비밀번호를 입력하세요"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={() => onPasswordShow()}>
-            {showPassword ? <BsEyeSlash size={15} /> : <BsEye size={15} />}
-          </button>
-        </div>
+        <Input
+          type="password"
+          placeholder="비밀번호를 입력하세요"
+          value={password}
+          setValue={setPassword}
+        />
         <div className={styles.loginCheckbox}>
           <input
             type="checkbox"
@@ -123,7 +100,6 @@ export default function Login() {
         <Link className={styles.creatAccount} to="/login/register">
           계정 만들기
         </Link>
-        <div ref={testRef} className={styles.testDiv}></div>
       </section>
     </div>
   );

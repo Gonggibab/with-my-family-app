@@ -1,31 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { RootState } from 'redux/store';
-import {
-  setIsValidatePage,
-  setPassCheck,
-  setPassword,
-  setValidationNum,
-} from 'redux/_slices/registerSlice';
+import { setIsLoading } from 'redux/_slices/appSlice';
 import { UserAPI, UserDataType } from 'api/UserAPI';
+import { EmailValidationProps } from 'views/register';
 import { sendEmailVerification } from 'utils/sendEmail';
 
 import styles from 'styles/components/Register/EmailVaildation.module.scss';
 import logo from 'assets/createAccount.svg';
-import { setIsLoading } from 'redux/_slices/appSlice';
 
-export default function EmailValidation() {
+export default function EmailValidation({
+  email,
+  password,
+  name,
+  bDay,
+  validationNum,
+  setPassword,
+  setPassCheck,
+  setValidationNum,
+  setIsValidatePage,
+}: EmailValidationProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const email = useSelector((state: RootState) => state.register.email);
-  const password = useSelector((state: RootState) => state.register.password);
-  const name = useSelector((state: RootState) => state.register.name);
-  const bDay = useSelector((state: RootState) => state.register.bDay);
-  const validationNum = useSelector(
-    (state: RootState) => state.register.validationNum
-  );
   const [enteredNum, setEnteredNum] = useState<string>('');
   const [expireTimeLeft, setExpireTimeLeft] = useState<number>(300);
 
@@ -33,7 +30,7 @@ export default function EmailValidation() {
     const timer = setInterval(() => {
       if (expireTimeLeft - 1 < 0) {
         clearInterval(timer);
-        dispatch(setValidationNum('expired'));
+        setValidationNum('expired');
       } else {
         setExpireTimeLeft(expireTimeLeft - 1);
       }
@@ -45,7 +42,7 @@ export default function EmailValidation() {
   const onReSendClicked = (target: HTMLButtonElement) => {
     const validationNum = sendEmailVerification(name, email);
     if (validationNum !== '') {
-      dispatch(setValidationNum(validationNum));
+      setValidationNum(validationNum);
     }
 
     // Reset Timer
@@ -90,9 +87,9 @@ export default function EmailValidation() {
           if (res.status === 400) {
             errElem.innerHTML = '다시 시도해 주세요.';
           } else {
-            dispatch(setIsValidatePage(false));
-            dispatch(setPassword(''));
-            dispatch(setPassCheck(''));
+            setIsValidatePage(false);
+            setPassword('');
+            setPassCheck('');
             navigate('/');
           }
         });
@@ -107,9 +104,9 @@ export default function EmailValidation() {
   };
 
   const onCancelClicked = () => {
-    dispatch(setIsValidatePage(false));
-    dispatch(setPassword(''));
-    dispatch(setPassCheck(''));
+    setIsValidatePage(false);
+    setPassword('');
+    setPassCheck('');
   };
 
   return (

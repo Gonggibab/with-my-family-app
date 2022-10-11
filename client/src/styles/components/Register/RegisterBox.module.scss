@@ -41,6 +41,15 @@
     width: 100%;
     max-width: 400px;
     height: 90%; 
+
+    .input {
+      display: flex;
+      flex-direction: column;
+
+      .title {
+        font-size: .8rem;
+      }
+    }    
   }
   
   .regisButton {

@@ -12,6 +12,7 @@ import MediaViewer from 'components/MediaViewer';
 import PostMenu from 'components/Post/PostMenu';
 import Comment from 'components/Post/Comment';
 import PostEdit from 'components/Post/PostEdit';
+import { convertURL } from 'utils/convertURL';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { FaUserCircle } from 'react-icons/fa';
 import {
@@ -21,7 +22,6 @@ import {
 } from 'react-icons/bs';
 
 import styles from 'styles/views/Post.module.scss';
-
 type PostInfo = {
   uploader: string;
   relationship: string;
@@ -288,7 +288,7 @@ export default function Post() {
         <section className={styles.mediaBox}>
           <div className={styles.uploader}>
             {postInfo?.profile ? (
-              <img src={postInfo?.profile} alt="사용자 프로필" />
+              <img src={convertURL(postInfo?.profile)} alt="사용자 프로필" />
             ) : (
               <FaUserCircle />
             )}

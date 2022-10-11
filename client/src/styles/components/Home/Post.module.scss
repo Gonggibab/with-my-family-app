@@ -40,9 +40,10 @@
     & > img, svg {
       position: relative;
       width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
+      height: 2rem;      
       object-fit: cover;
+      object-position: 50% 50%;
+      border-radius: 50%;
 
       @include mixins.device(mobile) {
         width: 1.8rem;

@@ -21,6 +21,7 @@ import ProfileManage from 'components/Profile/ProfileManage';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/views/Profile.module.scss';
+import { convertURL } from 'utils/convertURL';
 
 type PostBoxData = {
   postId: string;
@@ -29,7 +30,7 @@ type PostBoxData = {
   commentCount: string;
 };
 
-type UserData = {
+export type UserData = {
   _id: string;
   email: string;
   birthday?: string;
@@ -151,10 +152,7 @@ export default function Profile() {
       <div className={styles.userProfile}>
         <div className={styles.userImage}>
           {userData?.profile ? (
-            <img
-              src={`http://localhost:5000/${userData.profile}`}
-              alt="사용자 프로필 사진"
-            />
+            <img src={convertURL(userData.profile)} alt="사용자 프로필 사진" />
           ) : (
             <FaUserCircle />
           )}

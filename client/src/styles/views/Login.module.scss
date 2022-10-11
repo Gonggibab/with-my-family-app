@@ -42,75 +42,12 @@
       min-height: calc(0.9 * variables.$minimum-device-width + 180px);
     }
   
-    button {
-      margin: .5rem 0;
-      width: 100%;
-      height: 2.2rem;
-      border-radius: .2rem;
-      font-size: .8rem;
-      font-weight: bold;
-      transition: all 0.2s;
-
-      @include mixins.device(mobile) {
-        font-size: .6rem;
-      }
-    }
-  
     .logo {
       position: relative;
       margin-bottom: 2rem;
       width: 100%;
       height: 4rem;
       filter: var(--logo-invert-value);
-    }
-  
-    input {
-      margin: .5rem 0;
-      padding: .2rem .4rem;
-      width: 100%;
-      height: 2.4rem;
-      font-size: .8rem;
-      border-radius: .2rem;
-      color: var(--color);
-      background: var(--hr-color);
-  
-      &:focus::placeholder {         
-        color: transparent;
-        transition: all 0.1s;
-      }
-  
-      &::placeholder{
-        color: var(--color);
-        font-size: .8rem;
-        opacity: .6;      
-      }
-    }
-
-    .passwordInput {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: .5rem 0;
-      width: 100%;
-      height: 2.4rem;
-      border-radius: .2rem;
-      color: var(--color);
-      background: var(--hr-color);
-
-      input {
-        padding: .2rem .4rem;
-        width: 90%;
-        height: 100%;
-        background-color: transparent;
-      }
-
-      button {
-        display: flex;
-        align-items: center;
-        width: 10%;
-        height: 100%;
-        color: inherit;
-      }
     }
   
     .loginCheckbox {
@@ -145,12 +82,22 @@
     }
     
     .loginButton {
+      margin: .5rem 0;
+      width: 100%;
+      height: 2.2rem;
+      border-radius: .2rem;
+      font-size: .8rem;
+      font-weight: bold;
       color: colors.$white;
       background: colors.$blue;
   
       &:hover {
         color: colors.$blue;
         background: colors.$white;
+      }
+
+      @include mixins.device(mobile) {
+        font-size: .6rem;
       }
     }  
   
@@ -165,6 +112,12 @@
       justify-content: center;        
       align-items: center;
       color: colors.$white;
+      margin: .5rem 0;
+      width: 100%;
+      height: 2.2rem;
+      border-radius: .2rem;
+      font-size: .8rem;
+      font-weight: bold;
       background: #2db400;
   
       &:hover {
@@ -175,12 +128,22 @@
       svg {
         margin-right: 5px;
       }
+
+      @include mixins.device(mobile) {
+        font-size: .6rem;
+      }
     }
   
     .loginAPIGoogle {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: .5rem 0;
+      width: 100%;
+      height: 2.2rem;
+      border-radius: .2rem;
+      font-size: .8rem;
+      font-weight: bold;
       color: colors.$dark-black;
       background: colors.$white;
   
@@ -191,6 +154,10 @@
   
       svg {
         margin-right: 2px;
+      }
+
+      @include mixins.device(mobile) {
+        font-size: .6rem;
       }
     }
   

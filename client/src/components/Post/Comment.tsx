@@ -4,16 +4,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { calcDateDiff } from 'utils/calcDateDiff';
 import { CommentAPI } from 'api/CommentAPI';
-import DeleteConfirm from './DeleteConfirm';
+import DeleteConfirm from '../DeleteConfirm';
 import { CommentProps } from 'views/post';
 
 import styles from 'styles/views/Post.module.scss';
-
-export type DeleteConfrimProps = {
-  commentId: string;
-  setIsDeleteConfirm: React.Dispatch<React.SetStateAction<boolean>>;
-  updateCommentData: () => void;
-};
 
 export default function Comment({ comment, updateCommentData }: CommentProps) {
   const user = useSelector((state: RootState) => state.user.user);
@@ -45,13 +39,22 @@ export default function Comment({ comment, updateCommentData }: CommentProps) {
     }
   };
 
+  const DeleteComment = async () => {
+    try {
+      await CommentAPI.deleteComment(comment.commentId);
+      updateCommentData();
+      setIsDeleteConfirm(false);
+    } catch (err) {
+      console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
+    }
+  };
+
   return (
     <div className={styles.Comment}>
       {isDeleteConfirm && (
         <DeleteConfirm
-          commentId={comment.commentId}
           setIsDeleteConfirm={setIsDeleteConfirm}
-          updateCommentData={updateCommentData}
+          onConfirmClicked={DeleteComment}
         />
       )}
       <span className={styles.uploader}>

@@ -8,6 +8,9 @@ import {
   findUser,
   searchUser,
   updateUser,
+  updatePassword,
+  checkPassword,
+  deleteUser,
 } from '../api/user';
 import { auth } from '../middleware/auth';
 
@@ -21,5 +24,8 @@ router.get('/logout', auth, logout);
 router.post('/findUser', findUser);
 router.post('/searchUser', searchUser);
 router.post('/updateUser', updateUser);
+router.post('/updatePassword', auth, updatePassword);
+router.post('/checkPassword', auth, checkPassword);
+router.get('/deleteUser', auth, deleteUser);
 
 export default router;

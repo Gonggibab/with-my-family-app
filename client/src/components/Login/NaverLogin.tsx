@@ -43,7 +43,6 @@ export default function NaverLoginButton() {
         } else {
           dispatch(setIsLogin(res.data.isLogin));
           dispatch(setUser(res.data.user));
-          console.log(res.data.user);
         }
       });
 

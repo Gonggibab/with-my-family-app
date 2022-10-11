@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserModel, { IUser } from '../models/UserModel';
+import bcrpyt from 'bcrypt';
 
 // User Register
 const register = async (req: Request, res: Response) => {
@@ -174,6 +175,71 @@ const updateUser = async (req: Request, res: Response) => {
   );
 };
 
+// Update User Password
+const updatePassword = async (req: Request, res: Response) => {
+  const saltRounds = 10;
+  const password = req.body.password;
+
+  bcrpyt.hash(password, saltRounds, function (err, hash) {
+    if (err) {
+      return res.status(400).json({ err });
+    }
+
+    UserModel.updateOne(
+      { _id: req.user._id },
+      { password: hash },
+      (err: Error, user: IUser[]) => {
+        if (err) {
+          return res.status(400).json({ err });
+        }
+        return res.status(200).json({ user });
+      }
+    );
+  });
+};
+
+// Check User Password
+const checkPassword = async (req: Request, res: Response) => {
+  req.user.comparePassword(
+    req.body.password,
+    (err: Error, isMatch: boolean) => {
+      if (err)
+        return res.status(400).json({
+          err,
+        });
+
+      if (!isMatch)
+        return res.status(200).json({
+          success: false,
+        });
+
+      return res.status(200).json({
+        success: true,
+      });
+    }
+  );
+};
+
+// Delete User
+const deleteUser = async (req: Request, res: Response) => {
+  UserModel.deleteOne({ _id: req.user._id }, (err: Error, user: IUser[]) => {
+    if (err) {
+      return res.status(400).json({ err });
+    }
+    return res.status(200).json({
+      isLogin: false,
+      user: {
+        _id: '',
+        email: '',
+        birthday: '',
+        name: '',
+        profile: '',
+        role: 0,
+      },
+    });
+  });
+};
+
 export {
   register,
   checkDuplicateEmail,
@@ -183,4 +249,7 @@ export {
   findUser,
   searchUser,
   updateUser,
+  updatePassword,
+  checkPassword,
+  deleteUser,
 };
