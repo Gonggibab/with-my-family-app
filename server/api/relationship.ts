@@ -9,46 +9,43 @@ const addRelationship = async (req: Request, res: Response) => {
 
   RelationshipModel.find(
     { userId: user1, familyId: user2 },
-    (err: Error, relationship: IRelationship) => {
+    (err: Error, relationship: IRelationship[]) => {
       if (err) {
         return res.status(400).json({
           err,
         });
       }
 
-      if (!relationship) {
+      if (relationship.length === 0) {
         const relation: IRelationship = new RelationshipModel({
           userId: user1,
           familyId: user2,
         });
 
-        relation.save((err, rel) => {
+        relation.save((err, rel1) => {
           if (err)
             return res.status(400).json({
               err,
             });
 
-          return res.status(200).json({
-            rel,
+          const relation: IRelationship = new RelationshipModel({
+            userId: user2,
+            familyId: user1,
+          });
+
+          relation.save((err, rel2) => {
+            if (err)
+              return res.status(400).json({
+                err,
+              });
+
+            return res.status(200).json({
+              rel1,
+              rel2,
+            });
           });
         });
       }
-
-      const relation: IRelationship = new RelationshipModel({
-        userId: user2,
-        familyId: user1,
-      });
-
-      relation.save((err, rel) => {
-        if (err)
-          return res.status(400).json({
-            err,
-          });
-
-        return res.status(200).json({
-          rel,
-        });
-      });
     }
   );
 };

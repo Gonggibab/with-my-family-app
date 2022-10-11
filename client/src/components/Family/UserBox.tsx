@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
+import { convertURL } from 'utils/convertURL';
 import { UserBoxProps } from 'views/family';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoPersonAdd } from 'react-icons/io5';
@@ -29,7 +30,7 @@ export default function UserBox({ messageRef, user }: UserBoxProps) {
   return (
     <div className={styles.UserBox}>
       {user.profile ? (
-        <img src={user.profile} alt="사용자 프로필 사진" />
+        <img src={convertURL(user.profile)} alt="사용자 프로필 사진" />
       ) : (
         <FaUserCircle />
       )}

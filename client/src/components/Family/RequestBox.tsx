@@ -2,13 +2,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { RelationshipAPI } from 'api/RelationshipAPI';
+import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
+import fetchFamilyRequest from 'utils/fetchFamilyRequest';
+import fetchFamilyData from 'utils/fetchFamilyData';
+import { convertURL } from 'utils/convertURL';
 import { RequestBoxProps } from 'views/family';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/components/Family/RequestBox.module.scss';
-import { FamilyRequestAPI } from 'api/FamilyRequestAPI';
-import fetchFamilyRequest from 'utils/fetchFamilyRequest';
-import fetchFamilyData from 'utils/fetchFamilyData';
 
 export default function RequestBox({ request }: RequestBoxProps) {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export default function RequestBox({ request }: RequestBoxProps) {
   return (
     <div className={styles.RequestBox}>
       {request.profile ? (
-        <img src={request.profile} alt="사용자 프로필 사진" />
+        <img src={convertURL(request.profile)} alt="사용자 프로필 사진" />
       ) : (
         <FaUserCircle />
       )}
