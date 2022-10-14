@@ -8,30 +8,51 @@ import { ChatRoomProps } from 'views/chat';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/components/Chat/ChatRoom.module.scss';
+import { WebSocketAPI } from 'api/WebSocketAPI';
 
-export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
+export default function ChatRoom({
+  selectedRoom,
+  setIsNewChatMenu,
+}: ChatRoomProps) {
   const user = useSelector((state: RootState) => state.user.user);
-  const [content, setContent] = useState<string>('');
+  const [messageList, setMessageList] = useState<string[]>([]);
+  const [message, setMessage] = useState<string>('');
+
+  const onMessageSendClicked = () => {
+    const msgData = {
+      userId: user._id,
+      chatId: selectedRoom?.chatId!,
+      message: message,
+    };
+    WebSocketAPI.sendMessage(msgData);
+  };
+
+  // const renderMessages = messageList.map(msg => {
+  //   return()
+  // })
 
   return (
     <section className={styles.ChatRoom}>
-      {selectedRoom === '' ? (
+      {!selectedRoom ? (
         <>
           <h3>가족에게 메세지를 보내보세요</h3>
-          <button>메세지 보내기</button>
+          <button onClick={() => setIsNewChatMenu(true)}>메세지 보내기</button>
         </>
       ) : (
         <>
           <div className={styles.info}>
-            {user?.profile ? (
-              <img src={convertURL(user?.profile)} alt="사용자 프로필" />
+            {selectedRoom?.profile ? (
+              <img
+                src={convertURL(selectedRoom?.profile)}
+                alt="사용자 프로필"
+              />
             ) : (
               <FaUserCircle />
             )}
-            <h2>{user.name}</h2>
+            <h2>{selectedRoom.name}</h2>
           </div>
           <div className={styles.chatContent}>
-            <div className={styles.chat}>
+            {/* <div className={styles.chat}>
               {user?.profile ? (
                 <img src={convertURL(user?.profile)} alt="사용자 프로필" />
               ) : (
@@ -41,8 +62,9 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
                 <p>안녕하세요</p>
               </div>
               <span>{convertMessageTime(String(new Date(Date.now())))}</span>
-            </div>
-            <div className={styles.myChat}>
+            </div> */}
+
+            {/* <div className={styles.myChat}>
               <span>{convertMessageTime(String(new Date(Date.now())))}</span>
               <div className={styles.chatBubbleRight}>
                 <p>
@@ -57,11 +79,11 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
                   eius. Eius!
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className={styles.chatInput}>
-            <textarea onChange={(e) => setContent(e.currentTarget.value)} />
-            <button>전송</button>
+            <textarea onChange={(e) => setMessage(e.currentTarget.value)} />
+            <button onClick={onMessageSendClicked}>전송</button>
           </div>
         </>
       )}

@@ -1,32 +1,38 @@
-const webSocketInitiate = () => {
-  const socket = io('http://localhost:5000/');
+import { io, Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
 
-  socket.emit('chat', {
-    chatId: 'testChatId',
-    userId: 'testUserId',
-    name: 'VSCode',
-    message: 'string',
-  });
+export let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
-  socket.on('chat', function (data) {
-    console.log(data);
-  });
+export type RoomJoinData = {
+  userId: string;
+  participantId: string;
+  chatId?: string;
 };
 
-import { io } from 'socket.io-client';
-
-import HttpRequest from 'api/HttpRequest';
-
-let socket;
+export type MessageData = {
+  userId: string;
+  chatId: string;
+  message: string;
+};
 
 export const WebSocketAPI = {
-  login: () => {
-    socket = io('http://localhost:5000/');
+  login: (userId: string, name: string) => {
+    socket = io('http://localhost:5000/').emit('login', userId, name);
+
+    // Listening to socket server error
+    socket.on('error', (err) => {
+      console.log('Socket connection error: ' + err);
+    });
+
+    // Listening to chat messages
+    socket.on('message', (data) => {
+      console.log(data);
+    });
   },
-  getFamilyRequest: (userId: string) => {
-    return HttpRequest.post('/api/familyRequest/getRequest', { userId });
+  joinRoom: (data: RoomJoinData) => {
+    socket.emit('join', data);
   },
-  deleteFamilyRequest: (requestId: string) => {
-    return HttpRequest.post('/api/familyRequest/deleteRequest', { requestId });
+  sendMessage: (data: MessageData) => {
+    socket.emit('message', data);
   },
 };

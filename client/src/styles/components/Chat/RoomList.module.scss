@@ -26,7 +26,7 @@
     height: 3rem;
     font-weight: bold;
     border-radius: .4rem;
-    color: var(--color);
+    color: colors.$white;
     background-color: colors.$blue;
 
     @include mixins.device(tablet) {
@@ -35,7 +35,7 @@
 
     &:hover {
       color: colors.$blue;
-      background-color: var(--color);  
+      background-color: colors.$white;  
     }
   }
 
@@ -68,9 +68,10 @@
     }
 
     & > img, svg {
+      flex-shrink: 0;
       margin-right: .8rem;
-      width: 4rem;
-      height: 4rem;
+      width: 3rem;
+      height: 3rem;
       object-fit: cover;
       object-position: 50% 50%;
       border-radius: 50%;

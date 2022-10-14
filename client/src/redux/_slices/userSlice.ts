@@ -24,11 +24,19 @@ export type FamilyRequestsData = {
   profile?: string;
 };
 
+export type ChatRoomData = {
+  chatId: string;
+  userId: string;
+  name: string;
+  profile?: string;
+};
+
 type UserState = {
   isLogin: boolean;
   user: UserData;
   families: FamilyData[];
   familyRequests: FamilyRequestsData[];
+  chatRooms: ChatRoomData[];
 };
 
 const initialState: UserState = {
@@ -43,6 +51,7 @@ const initialState: UserState = {
   },
   families: [],
   familyRequests: [],
+  chatRooms: [],
 };
 
 const userSlice = createSlice({
@@ -61,10 +70,18 @@ const userSlice = createSlice({
     setFamilyRequests: (state, action: PayloadAction<FamilyRequestsData[]>) => {
       state.familyRequests = action.payload;
     },
+    setChatRooms: (state, action: PayloadAction<ChatRoomData[]>) => {
+      state.chatRooms = action.payload;
+    },
   },
 });
 
 export default userSlice;
 
-export const { setIsLogin, setUser, setFamilies, setFamilyRequests } =
-  userSlice.actions;
+export const {
+  setIsLogin,
+  setUser,
+  setFamilies,
+  setFamilyRequests,
+  setChatRooms,
+} = userSlice.actions;

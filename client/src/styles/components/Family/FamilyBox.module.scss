@@ -71,11 +71,12 @@
         .confirmBtn {
           padding: .4rem;
           border-radius: 15%;
+          color: colors.$white;
           background-color: colors.$blue;
 
           &:hover {
             color: colors.$blue;
-            background-color: var(--color);
+            background-color: colors.$white;
           }
         }
 

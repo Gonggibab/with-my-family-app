@@ -4,13 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
+import fetchFamilyData from 'utils/fetchFamilyData';
+import fetchFamilyRequest from 'utils/fetchFamilyRequest';
 import { UserAPI } from 'api/UserAPI';
+import { WebSocketAPI } from 'api/WebSocketAPI';
 import GoogleLoginButton from 'components/Login/GoogleLogin';
 import NaverLoginButton from 'components/Login/NaverLogin';
+import Input from 'components/Input';
 
 import styles from 'styles/views/Login.module.scss';
 import logo from 'assets/logo_kr.svg';
-import Input from 'components/Input';
 
 declare global {
   interface Window {
@@ -31,7 +34,7 @@ export default function Login() {
     }
   }, [isLogin, navigate]);
 
-  const onLoginClicked = (target: HTMLButtonElement) => {
+  const onLoginClicked = async (target: HTMLButtonElement) => {
     const errElem = target.previousElementSibling as HTMLElement;
 
     const loginData = {
@@ -40,19 +43,22 @@ export default function Login() {
       isRemainLogin: isRemainLogin,
     };
 
-    UserAPI.login(loginData).then((res) => {
-      if (res.status === 400) {
-        errElem.innerHTML = '오류가 발생했습니다. 다시 시도해 주세요';
+    try {
+      const userRes = await UserAPI.login(loginData);
+      dispatch(setIsLogin(userRes.data.isLogin));
+
+      if (!userRes.data.isLogin) {
+        errElem.innerHTML = userRes.data.message;
       } else {
-        if (!res.data.isLogin) {
-          errElem.innerHTML = res.data.message;
-        } else {
-          dispatch(setIsLogin(res.data.isLogin));
-          dispatch(setUser(res.data.user));
-          navigate('/');
-        }
+        dispatch(setUser(userRes.data.user));
+        fetchFamilyData(userRes.data.user._id, dispatch);
+        fetchFamilyRequest(userRes.data.user._id, dispatch);
+        WebSocketAPI.login(userRes.data.user._id, userRes.data.user.name);
+        navigate('/');
       }
-    });
+    } catch (err) {
+      errElem.innerHTML = '오류가 발생했습니다. 다시 시도해 주세요 ' + err;
+    }
 
     let timer = setTimeout(() => {
       errElem.innerHTML = '';
