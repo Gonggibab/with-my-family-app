@@ -71,16 +71,21 @@
     padding-right: .8rem;
     min-height: 70%;
     width: 100%;
-    overflow-y: scroll;
+    overflow-y: scroll;    
+
+    p {
+      white-space: pre-wrap;
+    }
 
     .chat {
       display: flex;
       align-items: flex-end;
       margin-top: 1rem;
-      width: 80%;
+      width: fit-content;
+      max-width: 80%;
 
       @include mixins.device(mobile) {
-        width: 100%;
+        max-width: 100%;
       }
 
       & > img, svg {
@@ -133,11 +138,15 @@
       align-items: flex-end;
       margin-left: auto;
       margin-top: 1rem;
-      width: 80%;
+      width: fit-content;
+      max-width: 80%;
+
+      @include mixins.device(mobile) {
+        max-width: 100%;
+      }
 
       .chatBubbleRight {
         position: relative;
-        margin-left: auto;
         padding: .4rem 1rem;
         color: var(--color);
         background: var(--profile-hr-color);

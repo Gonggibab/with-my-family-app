@@ -27,12 +27,14 @@ export interface SocketData {
 
 export type ChatJoinData = {
   userId: string;
-  participantId: string;
-  chatId?: string;
+  participantIds: string[];
 };
 
 export type MessageData = {
-  userId: string;
   chatId: string;
   message: string;
+  userId: string;
+  profile?: string;
+  recieverIds: string[];
+  createdAt: Date;
 };

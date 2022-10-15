@@ -68,11 +68,12 @@ export default function Layout({ children }: LayoutProps) {
       dispatch(setIsLogin(userRes.data.isLogin));
       if (userRes.data.isLogin) {
         dispatch(setUser(userRes.data.user));
-        fetchFamilyData(userRes.data.user._id, dispatch);
+        const families = await fetchFamilyData(userRes.data.user._id, dispatch);
         fetchFamilyRequest(userRes.data.user._id, dispatch);
         initializeWebSocket(
           userRes.data.user._id,
           userRes.data.user.name,
+          families!,
           dispatch
         );
       }

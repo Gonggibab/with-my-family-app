@@ -7,14 +7,9 @@ export type ChatDataType = {
 
 export const ChatAPI = {
   addChat: (userIdList: string[]) => {
-    let data = [];
-    for (const userId of userIdList) {
-      data.push({
-        userId: userId,
-        joinedAt: new Date(Date.now()),
-      });
-    }
-
-    return HttpRequest.post('/api/chat/addChat', data);
+    return HttpRequest.post('/api/chat/addChat', userIdList);
+  },
+  findChatbyUserId: (userId: string) => {
+    return HttpRequest.post('/api/chat/findChatbyUserId', { userId });
   },
 };

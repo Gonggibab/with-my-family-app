@@ -9,6 +9,7 @@ import mediaRoute from './MediaRoute';
 import commentRoute from './CommentRoute';
 import ddabongRoute from './DdabongRoute';
 import chatRoute from './ChatRoute';
+import messageRoute from './MessageRoute';
 
 const router: Router = express.Router();
 
@@ -22,5 +23,6 @@ router.use('/media', mediaRoute);
 router.use('/comments', commentRoute);
 router.use('/ddabong', ddabongRoute);
 router.use('/chat', chatRoute);
+router.use('/message', messageRoute);
 
 export default router;

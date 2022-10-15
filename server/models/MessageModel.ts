@@ -4,6 +4,9 @@ export interface IMessage extends Document {
   userId: Schema.Types.ObjectId;
   chatId: Schema.Types.ObjectId;
   message: string;
+  haventRead: Schema.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const MessageSchema = new mongoose.Schema<IMessage>(
@@ -19,6 +22,14 @@ const MessageSchema = new mongoose.Schema<IMessage>(
     message: {
       type: String,
     },
+    haventRead: [
+      {
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

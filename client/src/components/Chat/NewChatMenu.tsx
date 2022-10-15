@@ -2,13 +2,15 @@ import { MouseEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
+import { socket, WebSocketAPI } from 'api/WebSocketAPI';
 import { convertURL } from 'utils/convertURL';
 import { NewChatMenuProps } from 'views/chat';
 import { FaUserCircle } from 'react-icons/fa';
+import { AiFillCloseCircle } from 'react-icons/ai';
 
 import styles from 'styles/components/Chat/NewChatMenu.module.scss';
-import { AiFillCloseCircle } from 'react-icons/ai';
-import { socket, WebSocketAPI } from 'api/WebSocketAPI';
+import { ChatAPI } from 'api/ChatAPI';
+import fetchChatRoom from 'utils/fetchChatRoom';
 
 export default function NewChatMenu({
   setSelectedRoom,
@@ -22,11 +24,23 @@ export default function NewChatMenu({
     const onNewMessageClicked = () => {
       WebSocketAPI.joinRoom({
         userId: user._id,
-        participantId: family.userId,
+        participantIds: [family.userId],
       });
 
-      socket.on('join', (chatId) => {
-        setSelectedRoom(chatId);
+      socket.on('join', async (chatId) => {
+        const chatRes = await ChatAPI.findChatbyUserId(user._id);
+        fetchChatRoom(chatRes.data.chat, user._id, families, dispatch);
+        setSelectedRoom({
+          chatId: chatId,
+          users: [
+            {
+              userId: family.userId,
+              name: family.name,
+              profile: family.profile,
+              relationship: family.relationship,
+            },
+          ],
+        });
         setIsNewChatMenu(false);
       });
     };

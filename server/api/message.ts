@@ -2,54 +2,17 @@ import { Request, Response } from 'express';
 import { Error } from 'mongoose';
 import MessageModel, { IMessage } from '../models/MessageModel';
 
-// Add Message
-const addMessage = async (req: Request, res: Response) => {
-  const Message: IMessage = new MessageModel({
-    postId: req.body.postId,
-    userId: req.body.userId,
-  });
-
-  Message.save((err, Message) => {
-    if (err)
-      return res.status(400).json({
-        err,
-      });
-
-    return res.status(200).json({
-      Message,
-    });
-  });
-};
-
 // Find Message
-const findMessage = (req: Request, res: Response) => {
-  MessageModel.find({ postId: req.body.postId })
-    .populate('userId')
-    .sort({ createdAt: -1 })
-    .exec(function (err, Message) {
+const findMessagebyChatId = (req: Request, res: Response) => {
+  MessageModel.find({ chatId: req.body.chatId })
+    .sort({ createdAt: 1 })
+    .exec(function (err, message) {
       if (err) {
         console.log(err);
         return res.status(400).json({ err });
       }
-      return res.status(200).json({ Message });
+      return res.status(200).json({ message });
     });
-};
-
-// Delete Message
-const deleteMessage = (req: Request, res: Response) => {
-  MessageModel.deleteOne(
-    { _id: req.body.MessageId },
-    (err: Error, Message: IMessage) => {
-      if (err) {
-        return res.status(400).json({
-          err,
-        });
-      }
-      return res.status(200).json({
-        Message,
-      });
-    }
-  );
 };
 
 // Find and Count Message of a Post
@@ -63,4 +26,21 @@ const countMessage = (req: Request, res: Response) => {
   });
 };
 
-export { addMessage, findMessage, deleteMessage, countMessage };
+// // Delete Message
+// const deleteMessage = (req: Request, res: Response) => {
+//   MessageModel.deleteOne(
+//     { _id: req.body.MessageId },
+//     (err: Error, Message: IMessage) => {
+//       if (err) {
+//         return res.status(400).json({
+//           err,
+//         });
+//       }
+//       return res.status(200).json({
+//         Message,
+//       });
+//     }
+//   );
+// };
+
+export { findMessagebyChatId, countMessage };

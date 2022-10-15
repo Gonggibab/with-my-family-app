@@ -5,14 +5,15 @@ export let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export type RoomJoinData = {
   userId: string;
-  participantId: string;
-  chatId?: string;
+  participantIds: string[];
 };
 
 export type MessageData = {
-  userId: string;
   chatId: string;
   message: string;
+  userId: string;
+  profile?: string;
+  recieverIds?: string[];
 };
 
 export const WebSocketAPI = {
@@ -26,7 +27,7 @@ export const WebSocketAPI = {
 
     // Listening to chat messages
     socket.on('message', (data) => {
-      console.log(data);
+      // console.log(data);
     });
   },
   joinRoom: (data: RoomJoinData) => {

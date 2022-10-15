@@ -24,11 +24,16 @@ export type FamilyRequestsData = {
   profile?: string;
 };
 
-export type ChatRoomData = {
-  chatId: string;
+export type ChatUserInfo = {
   userId: string;
   name: string;
   profile?: string;
+  relationship?: string;
+};
+
+export type ChatRoomData = {
+  chatId: string;
+  users: ChatUserInfo[];
 };
 
 type UserState = {

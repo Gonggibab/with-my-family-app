@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
-import { login } from '../api/google';
+import { findMessagebyChatId } from '../api/message';
 
 const router: Router = express.Router();
 
-router.post('/login', login);
+router.post('/findMessagebyChatId', findMessagebyChatId);
 
 export default router;

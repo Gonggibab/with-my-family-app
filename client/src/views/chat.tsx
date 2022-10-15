@@ -8,6 +8,7 @@ import NewChatMenu from 'components/Chat/NewChatMenu';
 import styles from 'styles/views/Chat.module.scss';
 
 export type RoomListProps = {
+  selectedRoom: ChatRoomData | undefined;
   setSelectedRoom: React.Dispatch<
     React.SetStateAction<ChatRoomData | undefined>
   >;
@@ -34,6 +35,7 @@ export default function Chat() {
     <div className={styles.container}>
       <div className={styles.chatBox}>
         <RoomList
+          selectedRoom={selectedRoom}
           setSelectedRoom={setSelectedRoom}
           setIsNewChatMenu={setIsNewChatMenu}
         />
