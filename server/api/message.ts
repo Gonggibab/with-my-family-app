@@ -16,14 +16,23 @@ const findMessagebyChatId = (req: Request, res: Response) => {
 };
 
 // Find and Count Message of a Post
-const countMessage = (req: Request, res: Response) => {
-  MessageModel.find({ postId: req.body.postId }).count(function (err, count) {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ err });
+const readMessagebyChatId = (req: Request, res: Response) => {
+  MessageModel.updateMany(
+    { chatId: req.body.data.chatId },
+    {
+      $pull: { haventRead: { userId: req.body.data.userId } },
+    },
+    (err: Error, message: IMessage) => {
+      if (err) {
+        return res.status(400).json({
+          err,
+        });
+      }
+      return res.status(200).json({
+        message,
+      });
     }
-    return res.status(200).json({ count });
-  });
+  );
 };
 
 // // Delete Message
@@ -43,4 +52,4 @@ const countMessage = (req: Request, res: Response) => {
 //   );
 // };
 
-export { findMessagebyChatId, countMessage };
+export { findMessagebyChatId, readMessagebyChatId };

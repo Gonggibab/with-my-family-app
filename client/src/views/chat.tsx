@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { ChatRoomData } from 'redux/_slices/userSlice';
-import ChatRoom from 'components/Chat/ChatRoom';
 import RoomList from 'components/Chat/RoomList';
+import EmptyRoom from 'components/Chat/EmptyRoom';
+import ChatRoom from 'components/Chat/ChatRoom';
 import NewChatMenu from 'components/Chat/NewChatMenu';
 
 import styles from 'styles/views/Chat.module.scss';
@@ -15,9 +16,12 @@ export type RoomListProps = {
   setIsNewChatMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+export type EmptyRoomProps = {
+  setIsNewChatMenu: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 export type ChatRoomProps = {
   selectedRoom: ChatRoomData | undefined;
-  setIsNewChatMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type NewChatMenuProps = {
@@ -39,10 +43,11 @@ export default function Chat() {
           setSelectedRoom={setSelectedRoom}
           setIsNewChatMenu={setIsNewChatMenu}
         />
-        <ChatRoom
-          selectedRoom={selectedRoom}
-          setIsNewChatMenu={setIsNewChatMenu}
-        />
+        {!selectedRoom ? (
+          <EmptyRoom setIsNewChatMenu={setIsNewChatMenu} />
+        ) : (
+          <ChatRoom selectedRoom={selectedRoom} />
+        )}
       </div>
       {isNewChatMenu && (
         <NewChatMenu

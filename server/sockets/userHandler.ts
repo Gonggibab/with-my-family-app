@@ -8,6 +8,7 @@ import {
   SocketData,
   ChatJoinData,
   MessageData,
+  ReadMsgData,
 } from '../types/websocket';
 
 const userSocket = (
@@ -94,17 +95,33 @@ const userSocket = (
         userId: data.userId,
         chatId: data.chatId,
         message: data.message,
-        haventRead: [{ userId: data.recieverIds }],
+        haventRead: data.haventRead.map((id) => {
+          const userObj = { userId: id };
+          return userObj;
+        }),
       });
       const msgRes = await message.save();
 
       io.to(data.chatId).emit('message', {
         chatId: String(msgRes.chatId),
+        msgId: String(msgRes._id),
         message: msgRes.message,
         userId: String(msgRes.userId),
         profile: data?.profile,
-        recieverIds: data.recieverIds,
+        haventRead: data.haventRead,
         createdAt: msgRes.createdAt,
+      });
+    } catch (err) {
+      console.log(err);
+      if (err) socket.emit('error', err);
+    }
+  };
+
+  const readMessage = async (data: ReadMsgData) => {
+    try {
+      io.to(data.chatId).emit('read', {
+        chatId: data.chatId,
+        readerId: data.readerId,
       });
     } catch (err) {
       console.log(err);
@@ -115,6 +132,7 @@ const userSocket = (
   socket.on('login', login);
   socket.on('join', joinRoom);
   socket.on('message', sendMessage);
+  socket.on('read', readMessage);
 };
 
 export default userSocket;

@@ -18,26 +18,7 @@
     width: 100%;
     min-height: 80%;
   }
-
-  & > h3 {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: lighter;
-  }
-
-  & > button {
-    padding: .4rem .8rem;
-    font-weight: bold;
-    border-radius: .4rem;
-    color: colors.$white;
-    background-color: colors.$blue;
-
-    &:hover {
-      color: colors.$blue;
-      background-color:colors.$white;  
-    }
-  }
-
+  
   .info {
     flex-shrink: 0;
     display: flex;

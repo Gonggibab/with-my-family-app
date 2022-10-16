@@ -10,12 +10,14 @@ export interface ServerToClientEvents {
   ) => void;
   join: (chatId: string) => void;
   message: (data: MessageData) => void;
+  read: (data: ReadMsgData) => void;
 }
 
 export interface ClientToServerEvents {
   login: (userId: string, name: string) => void;
   join: (data: ChatJoinData) => void;
   message: (data: MessageData) => void;
+  read: (data: ReadMsgData) => void;
 }
 
 export interface InterServerEvents {}
@@ -32,9 +34,15 @@ export type ChatJoinData = {
 
 export type MessageData = {
   chatId: string;
+  msgId: string;
   message: string;
   userId: string;
   profile?: string;
-  recieverIds: string[];
+  haventRead: string[];
   createdAt: Date;
+};
+
+export type ReadMsgData = {
+  chatId: string;
+  readerId: string;
 };

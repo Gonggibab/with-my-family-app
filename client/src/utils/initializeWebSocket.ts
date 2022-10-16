@@ -2,8 +2,7 @@ import { Dispatch } from 'react';
 import { AnyAction } from 'redux';
 
 import { FamilyData } from 'redux/_slices/userSlice';
-import { socket, WebSocketAPI } from 'api/WebSocketAPI';
-import fetchChatRoom from './fetchChatRoom';
+import { WebSocketAPI } from 'api/WebSocketAPI';
 
 const initializeWebSocket = async (
   userId: string,
@@ -12,10 +11,7 @@ const initializeWebSocket = async (
   dispatch: Dispatch<AnyAction>
 ) => {
   try {
-    WebSocketAPI.login(userId, name);
-    socket.on('login', (chats) => {
-      fetchChatRoom(chats, userId, families, dispatch);
-    });
+    WebSocketAPI.login(userId, name, families, dispatch);
   } catch (err) {
     console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
   }

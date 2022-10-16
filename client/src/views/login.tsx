@@ -51,13 +51,18 @@ export default function Login() {
         errElem.innerHTML = userRes.data.message;
       } else {
         dispatch(setUser(userRes.data.user));
-        fetchFamilyData(userRes.data.user._id, dispatch);
+        const families = await fetchFamilyData(userRes.data.user._id, dispatch);
         fetchFamilyRequest(userRes.data.user._id, dispatch);
-        WebSocketAPI.login(userRes.data.user._id, userRes.data.user.name);
+        WebSocketAPI.login(
+          userRes.data.user._id,
+          userRes.data.user.name,
+          families!,
+          dispatch
+        );
         navigate('/');
       }
     } catch (err) {
-      errElem.innerHTML = '오류가 발생했습니다. 다시 시도해 주세요 ' + err;
+      errElem.innerHTML = '오류가 발생했습니다. 다시 시도해 주세요';
     }
 
     let timer = setTimeout(() => {
