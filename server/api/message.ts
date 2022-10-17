@@ -5,6 +5,7 @@ import MessageModel, { IMessage } from '../models/MessageModel';
 // Find Message
 const findMessagebyChatId = (req: Request, res: Response) => {
   MessageModel.find({ chatId: req.body.chatId })
+    .limit(20)
     .sort({ createdAt: 1 })
     .exec(function (err, message) {
       if (err) {

@@ -73,8 +73,8 @@ const deletePost = (req: Request, res: Response) => {
 // Get Recent Posts from Families
 const getRecentPost = (req: Request, res: Response) => {
   PostModel.find({ userId: { $in: req.body.userIdList } })
-    .sort({ createdAt: -1 })
     .limit(10)
+    .sort({ createdAt: -1 })
     .populate('userId')
     .exec(function (err, posts) {
       if (err) {

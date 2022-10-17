@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
 import { ChatRoomData } from 'redux/_slices/userSlice';
-import { socket, WebSocketAPI } from 'api/WebSocketAPI';
+import { socket, WebSocketAPI, ReadMsgData } from 'api/WebSocketAPI';
 import { MessageAPI } from 'api/MessageAPI';
 import { convertURL } from 'utils/convertURL';
 import convertMessageTime from 'utils/convertMessageTime';
@@ -23,15 +23,13 @@ type MessageData = {
 };
 
 export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
+  const msgBoxRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const user = useSelector((state: RootState) => state.user.user);
   const [inCommingMsg, setInCommingMsg] = useState<MessageData>();
+  const [msgReadInfo, setMsgReadInfo] = useState<ReadMsgData>();
   const [msgList, setMsgList] = useState<MessageData[]>([]);
   const [message, setMessage] = useState<string>('');
-
-  useEffect(() => {
-    console.log(msgList);
-  }, [msgList]);
 
   useEffect(() => {
     if (socket) {
@@ -45,12 +43,20 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
           createdAt: data.createdAt,
           isMyMsg: user._id === data.userId,
         });
+      });
 
-        return () => {
-          socket.off('message');
-        };
+      socket.on('read', (data: ReadMsgData) => {
+        setMsgReadInfo({
+          chatId: data.chatId,
+          readerId: data.readerId,
+        });
       });
     }
+
+    return () => {
+      socket.off('message');
+      socket.off('read');
+    };
   }, []);
 
   useEffect(() => {
@@ -83,16 +89,41 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
             isMyMsg: user._id === inCommingMsg.userId,
           },
         ]);
+        readMessage();
       }
       setInCommingMsg(undefined);
     }
   }, [inCommingMsg, selectedRoom]);
 
-  const fetchMsgData = async (room: ChatRoomData) => {
-    await MessageAPI.readMessagebyChatId({
-      chatId: room.chatId,
-      userId: user._id,
+  useEffect(() => {
+    if (msgReadInfo && selectedRoom) {
+      if (msgReadInfo.chatId === selectedRoom?.chatId) {
+        setMsgList(
+          msgList.map((msg) => {
+            return {
+              ...msg,
+              haventRead: msg.haventRead.filter(
+                (id) => id !== msgReadInfo.readerId
+              ),
+            };
+          })
+        );
+      }
+      setMsgReadInfo(undefined);
+    }
+  }, [msgReadInfo, selectedRoom]);
+
+  useEffect(() => {
+    msgBoxRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+      inline: 'nearest',
     });
+  }, [msgList.length]);
+
+  const fetchMsgData = async (room: ChatRoomData) => {
+    readMessage();
+
     const msgRes = await MessageAPI.findMessagebyChatId(room.chatId);
     const messages = msgRes.data.message;
     for (const msg of messages) {
@@ -111,7 +142,19 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
     }
   };
 
-  const onMessageSendClicked = () => {
+  const readMessage = async () => {
+    await MessageAPI.readMessagebyChatId({
+      chatId: selectedRoom?.chatId!,
+      userId: user._id,
+    });
+
+    WebSocketAPI.readMessage({
+      chatId: selectedRoom?.chatId!,
+      readerId: user._id,
+    });
+  };
+
+  const sendMessage = () => {
     if (message) {
       const msgData = {
         chatId: selectedRoom?.chatId!,
@@ -128,6 +171,13 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
         textArea.value = '';
         textArea.focus();
       }
+    }
+  };
+
+  const onEnterPressed = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
@@ -173,13 +223,17 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
             : selectedRoom?.users[0].name}
         </h2>
       </div>
-      <div className={styles.chatContent}>{renderMessages}</div>
+      <div className={styles.chatContent}>
+        {renderMessages}
+        <div ref={msgBoxRef}></div>
+      </div>
       <div className={styles.chatInput}>
         <textarea
           onChange={(e) => setMessage(e.currentTarget.value)}
+          onKeyDown={(e) => onEnterPressed(e)}
           ref={textAreaRef}
         />
-        <button onClick={onMessageSendClicked}>전송</button>
+        <button onClick={sendMessage}>전송</button>
       </div>
     </section>
   );

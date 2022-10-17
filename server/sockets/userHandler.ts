@@ -30,7 +30,7 @@ const userSocket = (
       socket.data.userId = userId;
       socket.data.name = name;
 
-      console.log(`${socket.data.name} connected`);
+      console.log(`${socket.data.name} connected to Web Socket`);
 
       const chats = await ChatModel.find({
         'users.userId': { $in: [userId] },
