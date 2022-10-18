@@ -31,9 +31,19 @@ export type ChatUserInfo = {
   relationship?: string;
 };
 
+export type MessageData = {
+  userId: string;
+  chatId: string;
+  message: string;
+  haventRead: string[];
+  createdAt: Date;
+};
+
 export type ChatRoomData = {
   chatId: string;
   users: ChatUserInfo[];
+  lastChat?: string;
+  unReadMsgs?: MessageData[];
 };
 
 type UserState = {
@@ -42,6 +52,7 @@ type UserState = {
   families: FamilyData[];
   familyRequests: FamilyRequestsData[];
   chatRooms: ChatRoomData[];
+  unreadMsgsCount: number;
 };
 
 const initialState: UserState = {
@@ -57,6 +68,7 @@ const initialState: UserState = {
   families: [],
   familyRequests: [],
   chatRooms: [],
+  unreadMsgsCount: 0,
 };
 
 const userSlice = createSlice({
@@ -78,6 +90,9 @@ const userSlice = createSlice({
     setChatRooms: (state, action: PayloadAction<ChatRoomData[]>) => {
       state.chatRooms = action.payload;
     },
+    setUnreadMsgsCount: (state, action: PayloadAction<number>) => {
+      state.unreadMsgsCount = action.payload;
+    },
   },
 });
 
@@ -89,4 +104,5 @@ export const {
   setFamilies,
   setFamilyRequests,
   setChatRooms,
+  setUnreadMsgsCount,
 } = userSlice.actions;

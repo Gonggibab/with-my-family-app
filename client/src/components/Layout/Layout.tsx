@@ -9,11 +9,11 @@ import {
   updateIsDarkMode,
 } from 'redux/_slices/appSlice';
 import { UserAPI } from 'api/UserAPI';
+import { WebSocketAPI } from 'api/WebSocketAPI';
 import { setIsLogin, setUser } from 'redux/_slices/userSlice';
 import fetchFamilyData from 'utils/fetchFamilyData';
 import { checkCategory } from 'utils/checkCategory';
 import fetchFamilyRequest from 'utils/fetchFamilyRequest';
-import initializeWebSocket from 'utils/initializeWebSocket';
 import ToggleSwitch from 'components/Layout/ToggleSwitch';
 import Loader from 'components/Loader';
 import { AiFillHome } from 'react-icons/ai';
@@ -34,6 +34,9 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const user = useSelector((state: RootState) => state.user.user);
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
+  const unreadMsgsCount = useSelector(
+    (state: RootState) => state.user.unreadMsgsCount
+  );
   const isDarkMode = useSelector((state: RootState) => state.app.isDarkMode);
   const currentPage = useSelector((state: RootState) => state.app.currentPage);
   const isLoading = useSelector((state: RootState) => state.app.isLoading);
@@ -70,7 +73,7 @@ export default function Layout({ children }: LayoutProps) {
         dispatch(setUser(userRes.data.user));
         const families = await fetchFamilyData(userRes.data.user._id, dispatch);
         fetchFamilyRequest(userRes.data.user._id, dispatch);
-        initializeWebSocket(
+        WebSocketAPI.initialize(
           userRes.data.user._id,
           userRes.data.user.name,
           families!,
@@ -86,7 +89,6 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <nav className={styles.nav}>
         <img className={styles.logo} src={logo} alt="로고" />
-
         <div className={styles.icons}>
           <Link to="/" className={currentPage === '/' ? styles.active : ''}>
             <AiFillHome size={25} />
@@ -123,6 +125,9 @@ export default function Layout({ children }: LayoutProps) {
           >
             <BsFillChatFill size={23} />
             <span>채팅</span>
+            {unreadMsgsCount !== 0 && (
+              <div className={styles.unReadCount}>{unreadMsgsCount}</div>
+            )}
           </Link>
         </div>
 

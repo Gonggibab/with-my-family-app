@@ -30,7 +30,7 @@ const userSocket = (
       socket.data.userId = userId;
       socket.data.name = name;
 
-      console.log(`${socket.data.name} connected to Web Socket`);
+      console.log(`${socket.data.name} connected to WebSocket`);
 
       const chats = await ChatModel.find({
         'users.userId': { $in: [userId] },
@@ -59,14 +59,15 @@ const userSocket = (
       if (chat) {
         socket.emit('join', chat._id);
       } else {
+        const tempUser = [
+          { userId: data.userId, joinedAt: new Date(Date.now()) },
+        ];
+        data.participantIds.forEach((id) => {
+          tempUser.push({ userId: id, joinedAt: new Date(Date.now()) });
+        });
+
         const newChat: IChat = new ChatModel({
-          users: [
-            { userId: data.userId, joinedAt: new Date(Date.now()) },
-            data.participantIds.map((id) => ({
-              userId: id,
-              joinedAt: new Date(Date.now()),
-            })),
-          ],
+          users: tempUser,
         });
 
         const chat = await newChat.save();
@@ -95,10 +96,7 @@ const userSocket = (
         userId: data.userId,
         chatId: data.chatId,
         message: data.message,
-        haventRead: data.haventRead.map((id) => {
-          const userObj = { userId: id };
-          return userObj;
-        }),
+        haventRead: data.haventRead,
       });
       const msgRes = await message.save();
 

@@ -6,9 +6,6 @@ export type ChatDataType = {
 };
 
 export const ChatAPI = {
-  addChat: (userIdList: string[]) => {
-    return HttpRequest.post('/api/chat/addChat', userIdList);
-  },
   findChatbyUserId: (userId: string) => {
     return HttpRequest.post('/api/chat/findChatbyUserId', { userId });
   },

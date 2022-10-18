@@ -31,7 +31,6 @@
   }
 
   .logo {
-    position: relative;
     width: 8rem;
     height: 4rem;
     filter: var(--logo-invert-value);
@@ -55,7 +54,8 @@
       width: 80%;
     }
 
-    a {
+    & > a {
+      position: relative;
       margin: 2rem 0;
       cursor: pointer;     
 
@@ -64,9 +64,8 @@
       }
     }
 
-    a.active {
+    & > a.active {
       color: colors.$blue;
-      transform: scale(1.2);
       transition: all 0.2s ease-in;
 
       span {
@@ -91,6 +90,21 @@
       @include mixins.device(mobile) {
         display: none;
       }
+    }
+
+    .unReadCount {
+      position: absolute;
+      top: -0.4rem;
+      right: -0.6rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 1.2rem;
+      height: 1.2rem;
+      font-size: .6rem;
+      border-radius: 50%;
+      color: colors.$white;
+      background-color: colors.$red;
     }
   }
 

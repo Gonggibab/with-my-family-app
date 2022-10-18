@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
-import { ChatRoomData } from 'redux/_slices/userSlice';
+import {
+  ChatRoomData,
+  setChatRooms,
+  setUnreadMsgsCount,
+} from 'redux/_slices/userSlice';
 import { socket, WebSocketAPI, ReadMsgData } from 'api/WebSocketAPI';
 import { MessageAPI } from 'api/MessageAPI';
 import { convertURL } from 'utils/convertURL';
@@ -23,9 +27,13 @@ type MessageData = {
 };
 
 export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
-  const msgBoxRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const loadCount = useRef<number>(0);
+  const msgBoxTopRef = useRef<HTMLDivElement>(null);
+  const msgBoxBottomRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const user = useSelector((state: RootState) => state.user.user);
+  const chatRooms = useSelector((state: RootState) => state.user.chatRooms);
   const [inCommingMsg, setInCommingMsg] = useState<MessageData>();
   const [msgReadInfo, setMsgReadInfo] = useState<ReadMsgData>();
   const [msgList, setMsgList] = useState<MessageData[]>([]);
@@ -53,9 +61,24 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
       });
     }
 
+    const observer = new IntersectionObserver((entries) => {
+      if (selectedRoom) {
+        if (loadCount.current > 0) {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              console.log('fetching..');
+              fetchMsgData(selectedRoom);
+            }
+          });
+        }
+      }
+    });
+    observer.observe(msgBoxTopRef.current!);
+
     return () => {
       socket.off('message');
       socket.off('read');
+      observer.disconnect();
     };
   }, []);
 
@@ -76,7 +99,6 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
     if (inCommingMsg && selectedRoom) {
       if (inCommingMsg.chatId === selectedRoom?.chatId) {
         setMsgList((msgList) => [
-          ...msgList,
           {
             chatId: inCommingMsg.chatId,
             message: inCommingMsg.message,
@@ -88,7 +110,9 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
             createdAt: inCommingMsg.createdAt,
             isMyMsg: user._id === inCommingMsg.userId,
           },
+          ...msgList,
         ]);
+
         readMessage();
       }
       setInCommingMsg(undefined);
@@ -113,19 +137,25 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
     }
   }, [msgReadInfo, selectedRoom]);
 
-  useEffect(() => {
-    msgBoxRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'end',
-      inline: 'nearest',
-    });
-  }, [msgList.length]);
+  // useEffect(() => {
+  //   msgBoxBottomRef.current?.scrollIntoView({
+  //     behavior: 'smooth',
+  //     block: 'end',
+  //     inline: 'nearest',
+  //   });
+  // }, [msgList.length]);
 
   const fetchMsgData = async (room: ChatRoomData) => {
     readMessage();
 
-    const msgRes = await MessageAPI.findMessagebyChatId(room.chatId);
+    console.log(loadCount.current);
+    const msgRes = await MessageAPI.findMessagebyChatId({
+      chatId: room.chatId,
+      load: loadCount.current,
+    });
     const messages = msgRes.data.message;
+    console.log(messages);
+
     for (const msg of messages) {
       setMsgList((msgList) => [
         ...msgList,
@@ -135,27 +165,63 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
           userId: msg.userId,
           profile: room.users[0].profile!,
           createdAt: msg.createdAt,
-          haventRead: msg.haventRead.map((user: any) => user.userId),
+          haventRead: msg.haventRead,
           isMyMsg: user._id === msg.userId,
         },
       ]);
     }
+    if (messages.length === 20) {
+      loadCount.current += 1;
+    }
   };
 
   const readMessage = async () => {
-    await MessageAPI.readMessagebyChatId({
-      chatId: selectedRoom?.chatId!,
-      userId: user._id,
-    });
+    if (selectedRoom) {
+      await MessageAPI.readMessagebyChatId({
+        chatId: selectedRoom.chatId!,
+        userId: user._id,
+      });
 
-    WebSocketAPI.readMessage({
-      chatId: selectedRoom?.chatId!,
-      readerId: user._id,
-    });
+      WebSocketAPI.readMessage({
+        chatId: selectedRoom.chatId!,
+        readerId: user._id,
+      });
+
+      let tempCount = 0;
+      const tempList = chatRooms.map((room) => {
+        if (room.chatId === selectedRoom.chatId!) {
+          const tempObj = {
+            ...room,
+            unReadMsgs: room.unReadMsgs?.filter(
+              (msg) => !msg.haventRead.includes(user._id)
+            ),
+          };
+          tempCount += tempObj.unReadMsgs?.length!;
+          return tempObj;
+        } else {
+          tempCount += room.unReadMsgs?.length!;
+          return room;
+        }
+      });
+      dispatch(setChatRooms(tempList));
+      dispatch(setUnreadMsgsCount(tempCount));
+    }
   };
 
   const sendMessage = () => {
     if (message) {
+      const tempList = chatRooms.map((room) => {
+        if (room.chatId === selectedRoom?.chatId!) {
+          return {
+            ...room,
+            lastChat: message,
+          };
+        } else {
+          return room;
+        }
+      });
+      dispatch(setChatRooms(tempList));
+
       const msgData = {
         chatId: selectedRoom?.chatId!,
         message: message,
@@ -224,8 +290,9 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
         </h2>
       </div>
       <div className={styles.chatContent}>
+        <div ref={msgBoxBottomRef}></div>
         {renderMessages}
-        <div ref={msgBoxRef}></div>
+        <div className={styles.scrollObserver} ref={msgBoxTopRef}></div>
       </div>
       <div className={styles.chatInput}>
         <textarea

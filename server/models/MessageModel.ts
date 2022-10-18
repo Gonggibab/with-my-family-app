@@ -1,10 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, ObjectId, Schema } from 'mongoose';
 
 export interface IMessage extends Document {
   userId: Schema.Types.ObjectId;
   chatId: Schema.Types.ObjectId;
   message: string;
-  haventRead: Schema.Types.ObjectId[];
+  haventRead: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,10 +24,7 @@ const MessageSchema = new mongoose.Schema<IMessage>(
     },
     haventRead: [
       {
-        userId: {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-        },
+        type: String,
       },
     ],
   },

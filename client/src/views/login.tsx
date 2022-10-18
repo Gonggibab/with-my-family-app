@@ -53,7 +53,7 @@ export default function Login() {
         dispatch(setUser(userRes.data.user));
         const families = await fetchFamilyData(userRes.data.user._id, dispatch);
         fetchFamilyRequest(userRes.data.user._id, dispatch);
-        WebSocketAPI.login(
+        WebSocketAPI.initialize(
           userRes.data.user._id,
           userRes.data.user.name,
           families!,

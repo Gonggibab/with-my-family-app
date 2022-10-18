@@ -53,11 +53,11 @@ export default function RoomList({
               ? room.users[0].relationship
               : room.users[0].name}
           </h3>
-          <p>
-            가장 마지막 메세지가 예시로 잘려서 보여집니다 이렇게 말이죠. 만약에
-            더 메세지가 길어진다면 어떨까요 이렇게 말이죠
-          </p>
+          <p>{room.lastChat}</p>
         </div>
+        {room.unReadMsgs?.length !== 0 && (
+          <span className={styles.unReadCount}>{room.unReadMsgs?.length}</span>
+        )}
       </div>
     );
   });

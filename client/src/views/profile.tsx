@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { setIsLoading } from 'redux/_slices/appSlice';
 import {
+  setChatRooms,
   setFamilies,
   setFamilyRequests,
   setIsLogin,
+  setUnreadMsgsCount,
   setUser,
 } from 'redux/_slices/userSlice';
 import { UserAPI } from 'api/UserAPI';
@@ -130,6 +132,8 @@ export default function Profile() {
       );
       dispatch(setFamilies([]));
       dispatch(setFamilyRequests([]));
+      dispatch(setChatRooms([]));
+      dispatch(setUnreadMsgsCount(0));
       navigate('/login');
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요 ' + err);

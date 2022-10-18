@@ -1,3 +1,4 @@
+import { MessageAPI } from 'api/MessageAPI';
 import { Dispatch } from 'react';
 import { AnyAction } from 'redux';
 
@@ -6,6 +7,7 @@ import {
   ChatUserInfo,
   FamilyData,
   setChatRooms,
+  setUnreadMsgsCount,
 } from 'redux/_slices/userSlice';
 
 const fetchChatRoom = async (
@@ -15,6 +17,7 @@ const fetchChatRoom = async (
   dispatch: Dispatch<AnyAction>
 ) => {
   const ChatRoomList: ChatRoomData[] = [];
+  let unReadMsgCount = 0;
   for (const chat of chats) {
     const chatUserList: ChatUserInfo[] = [];
     for (const user of chat.users) {
@@ -32,12 +35,24 @@ const fetchChatRoom = async (
       }
     }
 
+    const recentMsgRes = await MessageAPI.findRecentMessagebyChatId(chat._id);
+    const unreadMsgRes = await MessageAPI.countUnreadMessage({
+      chatId: chat._id,
+      userId: curUserId,
+    });
+
     ChatRoomList.push({
       chatId: chat._id,
       users: chatUserList,
+      lastChat: recentMsgRes.data.message?.message,
+      unReadMsgs: unreadMsgRes.data.messages,
     });
+    unReadMsgCount += unreadMsgRes.data.messages.length;
   }
   dispatch(setChatRooms(ChatRoomList));
+  dispatch(setUnreadMsgsCount(unReadMsgCount));
+
+  return { ChatRoomList, unReadMsgCount };
 };
 
 export default fetchChatRoom;
