@@ -9,6 +9,7 @@ import {
   setChatRooms,
   setUnreadMsgsCount,
 } from 'redux/_slices/userSlice';
+import compareTime from './compareTime';
 
 const fetchChatRoom = async (
   chats: any[],
@@ -40,15 +41,23 @@ const fetchChatRoom = async (
       chatId: chat._id,
       userId: curUserId,
     });
-
     ChatRoomList.push({
       chatId: chat._id,
       users: chatUserList,
-      lastChat: recentMsgRes.data.message?.message,
+      lastChat: recentMsgRes.data.message,
       unReadMsgs: unreadMsgRes.data.messages,
     });
     unReadMsgCount += unreadMsgRes.data.messages.length;
   }
+  ChatRoomList.sort((a, b) => {
+    if (!b.lastChat) {
+      return -1;
+    } else if (!a.lastChat) {
+      return 1;
+    }
+    return compareTime(a.lastChat.createdAt, b.lastChat.createdAt);
+  });
+
   dispatch(setChatRooms(ChatRoomList));
   dispatch(setUnreadMsgsCount(unReadMsgCount));
 

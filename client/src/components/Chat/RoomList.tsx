@@ -53,7 +53,7 @@ export default function RoomList({
               ? room.users[0].relationship
               : room.users[0].name}
           </h3>
-          <p>{room.lastChat}</p>
+          <p>{room.lastChat?.message}</p>
         </div>
         {room.unReadMsgs?.length !== 0 && (
           <span className={styles.unReadCount}>{room.unReadMsgs?.length}</span>

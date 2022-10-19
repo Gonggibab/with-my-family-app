@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { MessageData } from 'api/WebSocketAPI';
 
 export type UserData = {
   _id: string;
@@ -31,19 +32,19 @@ export type ChatUserInfo = {
   relationship?: string;
 };
 
-export type MessageData = {
+export type ChatRoomMessageData = {
   userId: string;
   chatId: string;
   message: string;
   haventRead: string[];
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type ChatRoomData = {
   chatId: string;
   users: ChatUserInfo[];
-  lastChat?: string;
-  unReadMsgs?: MessageData[];
+  lastChat?: MessageData;
+  unReadMsgs?: ChatRoomMessageData[];
 };
 
 type UserState = {

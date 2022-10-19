@@ -11,7 +11,6 @@ import {
 import { UserAPI } from 'api/UserAPI';
 import { validateNameNBday, validatePasswords } from 'utils/validateInput';
 import dateToString from 'utils/dateToString';
-import stringToDate from 'utils/stringToDate';
 import { ProfileManageProps, UserData } from 'views/profile';
 import DeleteConfirm from 'components/DeleteConfirm';
 import ChangeProfile from './ChangeProfile';
@@ -89,7 +88,7 @@ export default function ProfileManage({
             userId: userData._id,
             update: {
               name: name,
-              birthday: stringToDate(birthday),
+              birthday: new Date(birthday),
             },
           });
           getUserData(userData._id);

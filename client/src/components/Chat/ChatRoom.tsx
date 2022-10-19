@@ -29,8 +29,8 @@ type MessageData = {
 export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
   const dispatch = useDispatch();
   const loadCount = useRef<number>(0);
+  const msgBoxRef = useRef<HTMLDivElement>(null);
   const msgBoxTopRef = useRef<HTMLDivElement>(null);
-  const msgBoxBottomRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const user = useSelector((state: RootState) => state.user.user);
   const chatRooms = useSelector((state: RootState) => state.user.chatRooms);
@@ -38,6 +38,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
   const [msgReadInfo, setMsgReadInfo] = useState<ReadMsgData>();
   const [msgList, setMsgList] = useState<MessageData[]>([]);
   const [message, setMessage] = useState<string>('');
+  const [isSendMsg, setIsSendMsg] = useState<boolean>(false);
 
   useEffect(() => {
     if (socket) {
@@ -63,10 +64,9 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
 
     const observer = new IntersectionObserver((entries) => {
       if (selectedRoom) {
-        if (loadCount.current > 0) {
+        if (loadCount.current !== -1 && loadCount.current > 0) {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              console.log('fetching..');
               fetchMsgData(selectedRoom);
             }
           });
@@ -90,6 +90,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
     }
 
     if (selectedRoom) {
+      loadCount.current = 0;
       setMsgList([]);
       fetchMsgData(selectedRoom);
     }
@@ -97,7 +98,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
 
   useEffect(() => {
     if (inCommingMsg && selectedRoom) {
-      if (inCommingMsg.chatId === selectedRoom?.chatId) {
+      if (inCommingMsg.chatId === selectedRoom.chatId) {
         setMsgList((msgList) => [
           {
             chatId: inCommingMsg.chatId,
@@ -121,7 +122,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
 
   useEffect(() => {
     if (msgReadInfo && selectedRoom) {
-      if (msgReadInfo.chatId === selectedRoom?.chatId) {
+      if (msgReadInfo.chatId === selectedRoom.chatId) {
         setMsgList(
           msgList.map((msg) => {
             return {
@@ -137,24 +138,31 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
     }
   }, [msgReadInfo, selectedRoom]);
 
-  // useEffect(() => {
-  //   msgBoxBottomRef.current?.scrollIntoView({
-  //     behavior: 'smooth',
-  //     block: 'end',
-  //     inline: 'nearest',
-  //   });
-  // }, [msgList.length]);
+  useEffect(() => {
+    if (isSendMsg && msgList) {
+      if (msgList[0]?.isMyMsg) {
+        msgBoxRef.current?.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+        setIsSendMsg(false);
+      }
+    }
+  }, [msgList.length, isSendMsg]);
 
   const fetchMsgData = async (room: ChatRoomData) => {
     readMessage();
 
-    console.log(loadCount.current);
     const msgRes = await MessageAPI.findMessagebyChatId({
       chatId: room.chatId,
       load: loadCount.current,
     });
     const messages = msgRes.data.message;
-    console.log(messages);
+    if (messages.length === 20) {
+      loadCount.current += 1;
+    } else {
+      loadCount.current = -1;
+    }
 
     for (const msg of messages) {
       setMsgList((msgList) => [
@@ -169,9 +177,6 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
           isMyMsg: user._id === msg.userId,
         },
       ]);
-    }
-    if (messages.length === 20) {
-      loadCount.current += 1;
     }
   };
 
@@ -210,18 +215,6 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
 
   const sendMessage = () => {
     if (message) {
-      const tempList = chatRooms.map((room) => {
-        if (room.chatId === selectedRoom?.chatId!) {
-          return {
-            ...room,
-            lastChat: message,
-          };
-        } else {
-          return room;
-        }
-      });
-      dispatch(setChatRooms(tempList));
-
       const msgData = {
         chatId: selectedRoom?.chatId!,
         message: message,
@@ -237,6 +230,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
         textArea.value = '';
         textArea.focus();
       }
+      setIsSendMsg(true);
     }
   };
 
@@ -289,8 +283,7 @@ export default function ChatRoom({ selectedRoom }: ChatRoomProps) {
             : selectedRoom?.users[0].name}
         </h2>
       </div>
-      <div className={styles.chatContent}>
-        <div ref={msgBoxBottomRef}></div>
+      <div className={styles.chatContent} ref={msgBoxRef}>
         {renderMessages}
         <div className={styles.scrollObserver} ref={msgBoxTopRef}></div>
       </div>

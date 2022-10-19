@@ -4,10 +4,9 @@ import MessageModel, { IMessage } from '../models/MessageModel';
 
 // Find Message
 const findMessagebyChatId = (req: Request, res: Response) => {
-  console.log(req.body.data.load * 20);
   MessageModel.find({ chatId: req.body.data.chatId })
     .sort({ createdAt: -1 })
-    .skip(req.body.data.chatId.load * 20)
+    .skip(req.body.data.load * 20)
     .limit(20)
     .exec(function (err, message) {
       if (err) {

@@ -17,14 +17,14 @@ export type RoomJoinData = {
   participantIds: string[];
 };
 
-type MessageData = {
+export type MessageData = {
   chatId: string;
   msgId: string;
   message: string;
   userId: string;
   profile?: string;
   haventRead: string[];
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type SendMessageData = {
@@ -66,27 +66,25 @@ export const WebSocketAPI = {
 
     // Listening to chat messages
     socket.on('message', async (data: MessageData) => {
-      if (data.userId !== userId) {
-        if (chatRooms.map((chat) => chat.chatId).includes(data.chatId)) {
-          const ChatRoomList: ChatRoomData[] = [];
-          for (const chat of chatRooms) {
-            if (chat.chatId === data.chatId) {
-              ChatRoomList.push({
-                chatId: chat.chatId,
-                users: chat.users,
-                lastChat: data.message,
-                unReadMsgs: chat.unReadMsgs?.concat(data),
-              });
-            } else {
-              ChatRoomList.push(chat);
-            }
+      if (chatRooms.map((chat) => chat.chatId).includes(data.chatId)) {
+        const ChatRoomList: ChatRoomData[] = [];
+        for (const chat of chatRooms) {
+          if (chat.chatId === data.chatId) {
+            ChatRoomList.unshift({
+              chatId: chat.chatId,
+              users: chat.users,
+              lastChat: data,
+              unReadMsgs: chat.unReadMsgs?.concat(data),
+            });
+          } else {
+            ChatRoomList.push(chat);
           }
-          dispatch(setChatRooms(ChatRoomList));
-          dispatch(setUnreadMsgsCount(unReadMsgCount + 1));
-        } else {
-          const chatRes = await ChatAPI.findChatbyUserId(userId);
-          fetchChatRoom(chatRes.data.chat, userId, families, dispatch);
         }
+        dispatch(setChatRooms(ChatRoomList));
+        dispatch(setUnreadMsgsCount(unReadMsgCount + 1));
+      } else {
+        const chatRes = await ChatAPI.findChatbyUserId(userId);
+        fetchChatRoom(chatRes.data.chat, userId, families, dispatch);
       }
     });
   },
