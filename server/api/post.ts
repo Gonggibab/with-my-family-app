@@ -33,9 +33,10 @@ const findPost = async (req: Request, res: Response) => {
 
 // Find Post by User
 const findByUser = (req: Request, res: Response) => {
-  PostModel.find({ userId: req.body.userId })
+  PostModel.find({ userId: req.body.data.userId })
     .sort({ createdAt: -1 })
-    .limit(18)
+    .skip(req.body.data.load * req.body.data.size)
+    .limit(req.body.data.size)
     .exec(function (err, posts) {
       if (err) {
         console.log(err);
@@ -71,10 +72,11 @@ const deletePost = (req: Request, res: Response) => {
 };
 
 // Get Recent Posts from Families
-const getRecentPost = (req: Request, res: Response) => {
-  PostModel.find({ userId: { $in: req.body.userIdList } })
-    .limit(10)
+const getFamilyPost = (req: Request, res: Response) => {
+  PostModel.find({ userId: { $in: req.body.data.userIdList } })
     .sort({ createdAt: -1 })
+    .skip(req.body.data.load * req.body.data.size)
+    .limit(req.body.data.size)
     .populate('userId')
     .exec(function (err, posts) {
       if (err) {
@@ -109,6 +111,6 @@ export {
   findByUser,
   countUserPost,
   deletePost,
-  getRecentPost,
+  getFamilyPost,
   updatePost,
 };

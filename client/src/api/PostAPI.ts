@@ -5,6 +5,18 @@ export type PostDataType = {
   content: string;
 };
 
+export type GetUserPostsType = {
+  userId: string;
+  size: number;
+  load: number;
+};
+
+export type GetFamilyPostsType = {
+  userIdList: string[];
+  size: number;
+  load: number;
+};
+
 export type PostUpdateDataType = {
   postId: string;
   content: string;
@@ -17,8 +29,8 @@ export const PostAPI = {
   getPost: (postId: string) => {
     return HttpRequest.post('/api/posts/findPost', { postId });
   },
-  getByUser: (userId: string) => {
-    return HttpRequest.post('/api/posts/findByUser', { userId });
+  getPostsByUser: (data: GetUserPostsType) => {
+    return HttpRequest.post('/api/posts/findByUser', { data });
   },
   countUserPost: (userId: string) => {
     return HttpRequest.post('/api/posts/countUserPost', { userId });
@@ -26,8 +38,8 @@ export const PostAPI = {
   delete: (postId: string) => {
     return HttpRequest.post('/api/posts/deletePost', { postId });
   },
-  getRecentPost: (userIdList: string[]) => {
-    return HttpRequest.post('/api/posts/getRecentPost', { userIdList });
+  getFamilyPost: (data: GetFamilyPostsType) => {
+    return HttpRequest.post('/api/posts/getFamilyPost', { data });
   },
   updatePost: (data: PostUpdateDataType) => {
     return HttpRequest.post('/api/posts/updatePost', { data });

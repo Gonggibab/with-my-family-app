@@ -69,11 +69,14 @@ export default function EmailValidation({
         errElem.innerHTML = '인증코드가 틀렸습니다';
       } else {
         dispatch(setIsLoading(true));
-        const birthday = new Date(
-          +bDay.substring(0, 4),
-          +bDay.substring(5, 7),
-          +bDay.substring(8, 10)
-        );
+        const birthday =
+          bDay !== ''
+            ? new Date(
+                +bDay.substring(0, 4),
+                +bDay.substring(5, 7),
+                +bDay.substring(8, 10)
+              )
+            : undefined;
 
         const userData: UserDataType = {
           email: email,
@@ -93,7 +96,7 @@ export default function EmailValidation({
             navigate('/');
           }
         });
-        dispatch(setIsLoading(true));
+        dispatch(setIsLoading(false));
       }
 
       let errTimer = setTimeout(() => {

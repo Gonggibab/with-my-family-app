@@ -19,6 +19,38 @@
     min-height: variables.$minimum-device-height;
   }
 
+  .addFamilyRecommendation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80vh;
+
+    & > h3 {
+      font-size: 1.6rem;
+    }
+
+    & > h4 {
+      margin-top: .6rem;
+      font-weight: lighter;
+    }
+
+    & > button {
+      margin-top: 1.6rem;
+      padding: .4rem .8rem;
+      font-weight: bold;
+      border-radius: 1rem;
+      color: colors.$white;
+      background-color: colors.$blue;
+
+      &:hover {
+        color: colors.$blue;
+        background-color: colors.$white;
+      }
+    }
+  }
+
   .addPostBtn {
     z-index: 500;
     display: flex;

@@ -59,7 +59,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (user && !isLogin) {
-      navigate('login');
+      if (!location.pathname.includes('login')) navigate('login');
     }
 
     dispatch(setCurrentPage(location.pathname));

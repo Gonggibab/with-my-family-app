@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
+import { setIsLoading } from 'redux/_slices/appSlice';
 import { PostAPI } from 'api/PostAPI';
 import { MediaAPI } from 'api/MediaAPI';
+import { convertURL } from 'utils/convertURL';
 import { ContentAddBoxProps } from './addPostBox';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 import { FaUserCircle } from 'react-icons/fa';
 
 import styles from 'styles/components/AddPost/ContentAddBox.module.scss';
-import { setIsLoading } from 'redux/_slices/appSlice';
-
 export default function ContentAddBox({
   files,
   setIsContentAdd,
@@ -81,7 +81,7 @@ export default function ContentAddBox({
       <div className={styles.contentAddZone}>
         <div className={styles.uploaderInfo}>
           {user.profile ? (
-            <img src={user.profile} alt="사용자 프로필" />
+            <img src={convertURL(user.profile)} alt="사용자 프로필" />
           ) : (
             <FaUserCircle />
           )}

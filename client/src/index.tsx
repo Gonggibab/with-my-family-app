@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from 'reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from 'redux/store';
 
+import store from 'redux/store';
 import Layout from 'components/Layout/Layout';
 import Home from 'views/home';
 import AddPost from 'views/addPost';

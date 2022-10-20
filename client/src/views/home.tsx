@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from 'redux/store';
@@ -11,6 +11,7 @@ import Post from 'components/Home/Post';
 import { AiFillFileAdd } from 'react-icons/ai';
 
 import styles from 'styles/views/Home.module.scss';
+import { RelationshipAPI } from 'api/RelationshipAPI';
 
 export type MediaData = {
   url: string;
@@ -43,27 +44,72 @@ export type PostProps = {
 
 export default function Home() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const loadCount = useRef<number>(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const isLogin = useSelector((state: RootState) => state.user.isLogin);
+  const user = useSelector((state: RootState) => state.user.user);
   const families = useSelector((state: RootState) => state.user.families);
   const [posts, setPosts] = useState<postData[]>([]);
+  const [isNoFamily, setIsNoFamily] = useState<boolean>(false);
 
   useEffect(() => {
-    if (families.length !== 0) {
-      fetchFamilyPosts();
-    }
-  }, [families]);
+    loadCount.current = 0;
+    setPosts([]);
+    const observer = new IntersectionObserver((entries) => {
+      if (loadCount.current !== -1 && loadCount.current > 0) {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            fetchFamilyPosts(5);
+          }
+        });
+      }
+    });
 
-  const fetchFamilyPosts = async () => {
-    try {
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (user._id) {
       dispatch(setIsLoading(true));
-      const familyIdList = [];
-      for (const family of families) {
-        familyIdList.push(family.userId);
+      fetchFamilyPosts(5);
+      dispatch(setIsLoading(false));
+    }
+  }, [user._id]);
+
+  const fetchFamilyPosts = async (loadSize: number) => {
+    try {
+      const relationRes = await RelationshipAPI.getRelationship(user._id);
+      const familyIdList = relationRes.data.relationship.map(
+        (relation: any) => relation.familyId
+      );
+
+      if (familyIdList.length === 0) {
+        setIsNoFamily(true);
+        return;
       }
 
-      const postRes = await PostAPI.getRecentPost(familyIdList);
-      const postList = [];
-      for (const post of postRes.data.posts) {
+      const postRes = await PostAPI.getFamilyPost({
+        userIdList: familyIdList,
+        size: loadSize,
+        load: loadCount.current,
+      });
+
+      const posts = postRes.data.posts;
+      if (posts.length === loadSize) {
+        loadCount.current += 1;
+      } else {
+        loadCount.current = -1;
+      }
+
+      const postList: postData[] = [];
+      for (const post of posts) {
         let relationship;
         for (const family of families) {
           if (family.userId === post.userId._id) {
@@ -101,8 +147,7 @@ export default function Home() {
           updatedAt: post.updatedAt,
         });
       }
-      setPosts(postList);
-      dispatch(setIsLoading(false));
+      setPosts((posts) => [...posts, ...postList]);
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
@@ -116,12 +161,23 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {postComponents}
-      {isLogin && (
-        <Link className={styles.addPostBtn} to={'/addPost'}>
-          <AiFillFileAdd />
-          <span>글 쓰기</span>
-        </Link>
+      {!isNoFamily ? (
+        <>
+          {postComponents}
+          <div className={styles.scrollObserver} ref={bottomRef} />
+          {isLogin && (
+            <Link className={styles.addPostBtn} to={'/addPost'}>
+              <AiFillFileAdd />
+              <span>글 쓰기</span>
+            </Link>
+          )}
+        </>
+      ) : (
+        <div className={styles.addFamilyRecommendation}>
+          <h3>표시할 게시물이 없습니다</h3>
+          <h4>가족을 추가해 게시물을 찾아보세요</h4>
+          <button onClick={() => navigate('family')}>가족 페이지로</button>
+        </div>
       )}
     </div>
   );

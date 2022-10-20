@@ -5,7 +5,7 @@ import {
   findByUser,
   countUserPost,
   deletePost,
-  getRecentPost,
+  getFamilyPost,
   updatePost,
 } from '../api/post';
 
@@ -16,7 +16,7 @@ router.post('/findPost', findPost);
 router.post('/findByUser', findByUser);
 router.post('/countUserPost', countUserPost);
 router.post('/deletePost', deletePost);
-router.post('/getRecentPost', getRecentPost);
+router.post('/getFamilyPost', getFamilyPost);
 router.post('/updatePost', updatePost);
 
 export default router;

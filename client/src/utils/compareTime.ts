@@ -19,11 +19,9 @@ const compareTime = (a: string, b: string) => {
   );
 
   if (dateA > dateB) {
-    console.log(`${dateA} more recent than ${dateB}`);
     return -1;
   }
   if (dateA < dateB) {
-    console.log(`${dateB} more recent than ${dateA}`);
     return 1;
   }
   return 0;

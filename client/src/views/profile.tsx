@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -57,6 +57,8 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const loadCount = useRef<number>(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.user.user);
   const [userData, setUserData] = useState<UserData>();
   const [postBoxes, setPostBoxes] = useState<PostBoxData[]>([]);
@@ -64,17 +66,37 @@ export default function Profile() {
   const [isManagement, setIsManagement] = useState<boolean>(false);
 
   useEffect(() => {
+    loadCount.current = 0;
+    setPostBoxes([]);
+    const observer = new IntersectionObserver((entries) => {
+      if (loadCount.current !== -1 && loadCount.current > 0) {
+        entries.forEach((entry) => {
+          if (id && entry.isIntersecting) {
+            getUserPosts(id, 18);
+          }
+        });
+      }
+    });
+    observer.observe(bottomRef.current!);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (id) {
       getUserData(id);
+
+      if (user._id === id) {
+        setIsMyProfile(true);
+      }
     }
   }, [user]);
 
   const getUserData = async (userId: string) => {
     try {
       dispatch(setIsLoading(true));
-      if (user._id === userId) {
-        setIsMyProfile(true);
-      }
       const userRes = await UserAPI.getUser(userId);
       const userData = userRes.data.user;
       const postRes = await PostAPI.countUserPost(userData._id);
@@ -86,19 +108,30 @@ export default function Profile() {
         relationCount: relationRes.data.count,
       });
 
-      getUserPosts(userData._id);
+      getUserPosts(userData._id, 18);
       dispatch(setIsLoading(false));
     } catch (err) {
       console.log('오류가 발생했습니다. 다시 시도해 주세요. ' + err);
     }
   };
 
-  const getUserPosts = async (userId: string) => {
+  const getUserPosts = async (userId: string, loadSize: number) => {
     try {
-      const postRes = await PostAPI.getByUser(userId);
+      const postRes = await PostAPI.getPostsByUser({
+        userId: userId,
+        size: loadSize,
+        load: 0,
+      });
+
+      const posts = postRes.data.posts;
+      if (posts.length === loadSize) {
+        loadCount.current += 1;
+      } else {
+        loadCount.current = -1;
+      }
 
       const postBoxData = [];
-      for (const post of postRes.data.posts) {
+      for (const post of posts) {
         const mediaRes = await MediaAPI.getByPost(post._id);
         const ddabongRes = await DdabongAPI.countDdabongbyPostId(post._id);
         const commentRes = await CommentAPI.countCommentbyPostId(post._id);
@@ -196,7 +229,10 @@ export default function Profile() {
         </div>
       </div>
       <hr></hr>
-      <div className={styles.userPosts}>{renderPostBoxes}</div>
+      <div className={styles.userPosts}>
+        {renderPostBoxes}
+        <div className={styles.scrollObserver} ref={bottomRef}></div>
+      </div>
     </div>
   );
 }

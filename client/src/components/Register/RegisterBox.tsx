@@ -79,7 +79,6 @@ export default function RegisterBox({
             type="password"
             placeholder="8자 이상, 문자/숫자/기호 사용가능"
             value={password}
-            password={password}
             setValue={setPassword}
             validateInput={validatePassword}
           />
