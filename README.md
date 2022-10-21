@@ -1,22 +1,43 @@
+# With-My-Family
+
+Instagram is referred to design functions and UI, and focused on implementing main functions on the project.
+This app is built with React on the client side and NodeJS on the server. MongoDB is used for Database.
+
 ## Available Scripts
 
 In the project directory, you can run:
 
 ### `npm run dev`
 
-Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
 ## Test User Info
 
 ID: testAdmin@gmail.com \
 Password: admin1234!
 
-ID: testDad@gmail.com \
-Password: 12341234
+## Main Features
 
-ID: testMom@gmail.com \
-Password: 12341234
+- ### Main Page
+
+  - watch family post
+  - add new post
+
+- ### Login Page
+
+  - login / register account
+
+- ### Profile Page
+
+  - edit my profile
+  - edit my post list
+
+- ### Family Page
+
+  - find & add family
+  - check family add request
+  - edit family list
+
+- ### Chat Page
+
+  - realtime chat with families
